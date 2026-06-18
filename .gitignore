@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Credenciais
+config.json
+
+# Gerados
+posts/*.jpg
+posts/*.png
+logs/
+
+# Sistema
+*.lnk
+criar-atalhos.vbs

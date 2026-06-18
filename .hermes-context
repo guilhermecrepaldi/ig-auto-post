@@ -1,0 +1,6 @@
+D:\projetos\ig-auto-post\ — IG AUTO POST
+repo: github.com/guilhermecrepaldi/ig-auto-post
+status: funcional (legenda + imagem + postagem)
+stack: instagrapi 2.16.5, Pillow 12.2.0, DeepSeek, Ollama qwen3-vl:4b
+prox passo: templates visuais, ComfyUI, agendar cron
+roteiro completo: NEXT_SESSION.md
