@@ -260,30 +260,30 @@ def _desenhar_capa(draw, W, H, slide, paleta):
     accent = hex_to_rgb(paleta["accent"])
     secundaria = hex_to_rgb(paleta["secundaria"])
 
-    font_tit = carregar_fonte("Inter-Bold.ttf", 72)
-    font_sub = carregar_fonte("Inter-Regular.ttf", 28)
-    font_data = carregar_fonte("Inter-Regular.ttf", 20)
+    font_tit = carregar_fonte("Inter-Bold.ttf", 86)
+    font_sub = carregar_fonte("Inter-Regular.ttf", 34)
+    font_data = carregar_fonte("Inter-Regular.ttf", 24)
 
     # Logo grande
-    draw.text((W // 2, H // 2 - 100), "AI NEWS",
+    draw.text((W // 2, H // 2 - 120), "AI NEWS",
               fill="white", anchor="mm", font=font_tit)
 
     # Linha decorativa
-    draw.rectangle([(W//2 - 120, H//2 - 25), (W//2 + 120, H//2 - 20)], fill=accent)
+    draw.rectangle([(W//2 - 140, H//2 - 30), (W//2 + 140, H//2 - 24)], fill=accent)
 
     # Subtitulo
-    draw.text((W // 2, H // 2 + 40), slide.get("subtitulo", "As principais noticias de IA"),
+    draw.text((W // 2, H // 2 + 50), slide.get("subtitulo", "As principais noticias de IA"),
               fill="#aaaaaa", anchor="mm", font=font_sub)
 
     # Data
     data = slide.get("data_str", datetime.now().strftime("%d/%m/%Y"))
-    draw.text((W // 2, H // 2 + 100), data,
+    draw.text((W // 2, H // 2 + 120), data,
               fill="#666666", anchor="mm", font=font_data)
 
     # Hashtags no rodape
-    font_hash = carregar_fonte("Inter-Regular.ttf", 22)
-    draw.rectangle([(0, H - 90), (W, H)], fill=(10, 10, 20, 180))
-    draw.text((W // 2, H - 55), "#IA #AI #Noticias #Tecnologia",
+    font_hash = carregar_fonte("Inter-Regular.ttf", 26)
+    draw.rectangle([(0, H - 100), (W, H)], fill=(10, 10, 20, 180))
+    draw.text((W // 2, H - 60), "#IA #AI #Noticias #Tecnologia",
               fill=paleta["hashtag"], anchor="mt", font=font_hash)
 
 
@@ -292,104 +292,104 @@ def _desenhar_noticia(draw, W, H, slide, paleta):
     accent = hex_to_rgb(paleta["accent"])
     secundaria = hex_to_rgb(paleta["secundaria"])
 
-    # Badge + data na mesma linha (economiza espaco)
-    font_badge = carregar_fonte("Inter-Bold.ttf", 14)
+    # Badge + data
+    font_badge = carregar_fonte("Inter-Bold.ttf", 17)
     cat_info = slide.get("categoria", "tendencias").upper()
-    draw.rectangle([(W//2 - 100, 90), (W//2 + 100, 118)], fill=secundaria + (60,))
-    draw.text((W // 2, 104), f"  {cat_info}  ", fill=accent, anchor="mt", font=font_badge)
+    draw.rectangle([(W//2 - 110, 85), (W//2 + 110, 118)], fill=secundaria + (60,))
+    draw.text((W // 2, 102), f"  {cat_info}  ", fill=accent, anchor="mt", font=font_badge)
 
     data = slide.get("data_str", "")
-    font_data = carregar_fonte("Inter-Regular.ttf", 15)
-    draw.text((W // 2, 140), f"📅 {data}", fill="#777777", anchor="mt", font=font_data)
+    font_data = carregar_fonte("Inter-Regular.ttf", 18)
+    draw.text((W // 2, 145), f"📅 {data}", fill="#777777", anchor="mt", font=font_data)
 
-    # TITULO - maior possivel
-    font_tit = carregar_fonte("Inter-SemiBold.ttf", 28)
-    tit_linhas = textwrap.wrap(slide["titulo"], width=30)
-    yt = 185
+    # TITULO maior
+    font_tit = carregar_fonte("Inter-SemiBold.ttf", 34)
+    tit_linhas = textwrap.wrap(slide["titulo"], width=28)
+    yt = 195
     for linha in tit_linhas[:3]:
         draw.text((W // 2, yt), linha, fill="white", anchor="mt", font=font_tit)
-        yt += 36
+        yt += 42
 
-    # FACT como bullets curtos
+    # FACT bullets maior
     fact = slide.get("fact", "") or slide.get("resumo", "")
     bullets = slide.get("bullets", [])
 
     if bullets:
-        font_fact = carregar_fonte("Inter-Regular.ttf", 18)
-        yf = yt + 12
+        font_fact = carregar_fonte("Inter-Regular.ttf", 22)
+        yf = yt + 14
         for bullet in bullets[:3]:
             btext = f"▸ {bullet}"
-            lines = textwrap.wrap(btext, width=50)
+            lines = textwrap.wrap(btext, width=44)
             for line in lines[:2]:
-                if yf > 720:
+                if yf > 715:
                     break
-                draw.text((W // 2, yf), line, fill="#bbbbbb", anchor="mt", font=font_fact)
-                yf += 24
+                draw.text((W // 2, yf), line, fill="#cccccc", anchor="mt", font=font_fact)
+                yf += 28
         yt = yf
     elif fact:
         frases = [f.strip() for f in fact.replace(". ", ".@@").replace("! ", "!@@").replace("? ", "?@@").split("@@") if f.strip()]
-        font_fact = carregar_fonte("Inter-Regular.ttf", 18)
-        yf = yt + 12
+        font_fact = carregar_fonte("Inter-Regular.ttf", 22)
+        yf = yt + 14
         for frase in frases[:3]:
-            if len(frase) > 100:
-                frase = frase[:97] + "..."
+            if len(frase) > 90:
+                frase = frase[:87] + "..."
             bullet = f"▸ {frase}"
-            lines = textwrap.wrap(bullet, width=50)
+            lines = textwrap.wrap(bullet, width=44)
             for line in lines[:2]:
-                if yf > 720:
+                if yf > 715:
                     break
-                draw.text((W // 2, yf), line, fill="#bbbbbb", anchor="mt", font=font_fact)
-                yf += 24
+                draw.text((W // 2, yf), line, fill="#cccccc", anchor="mt", font=font_fact)
+                yf += 28
         yt = yf
 
-    # IMPACTO - bullets curtos
+    # IMPACTO bullets maior
     imp_bullets = slide.get("imp_bullets", [])
     impact = slide.get("impact", "")
 
     if imp_bullets:
-        font_imp_label = carregar_fonte("Inter-Bold.ttf", 13)
-        font_imp = carregar_fonte("Inter-Regular.ttf", 17)
-        yi = yt + 15
-        if yi < 720:
+        font_imp_label = carregar_fonte("Inter-Bold.ttf", 16)
+        font_imp = carregar_fonte("Inter-Regular.ttf", 20)
+        yi = yt + 16
+        if yi < 710:
             draw.text((W // 2, yi), "IMPACTO", fill=accent, anchor="mt", font=font_imp_label)
-            yi += 20
+            yi += 24
             for ib in imp_bullets[:2]:
                 ibtext = f"▸ {ib}"
-                ib_lines = textwrap.wrap(ibtext, width=48)
+                ib_lines = textwrap.wrap(ibtext, width=44)
                 for line in ib_lines[:2]:
-                    if yi > 760:
+                    if yi > 755:
                         break
                     draw.text((W // 2, yi), line, fill="#cccccc", anchor="mt", font=font_imp)
-                    yi += 22
+                    yi += 26
     elif impact:
-        imp_short = impact[:250]
-        font_imp_label = carregar_fonte("Inter-Bold.ttf", 13)
-        font_imp = carregar_fonte("Inter-Regular.ttf", 17)
-        yi = yt + 15
-        if yi < 720:
+        imp_short = impact[:200]
+        font_imp_label = carregar_fonte("Inter-Bold.ttf", 16)
+        font_imp = carregar_fonte("Inter-Regular.ttf", 20)
+        yi = yt + 16
+        if yi < 710:
             draw.text((W // 2, yi), "IMPACTO", fill=accent, anchor="mt", font=font_imp_label)
-            yi += 20
-            imp_lines = textwrap.wrap(imp_short, width=48)
+            yi += 24
+            imp_lines = textwrap.wrap(imp_short, width=44)
             for line in imp_lines[:2]:
-                if yi > 760:
+                if yi > 755:
                     break
                 draw.text((W // 2, yi), line, fill="#cccccc", anchor="mt", font=font_imp)
-                yi += 22
+                yi += 26
 
     # Fonte
     fonte = slide.get("fonte", "")
     if fonte:
-        font_fonte = carregar_fonte("Inter-Regular.ttf", 14)
-        draw.text((W // 2, H - 140), f"Fonte: {fonte}",
+        font_fonte = carregar_fonte("Inter-Regular.ttf", 17)
+        draw.text((W // 2, H - 145), f"Fonte: {fonte}",
                   fill="#555555", anchor="mt", font=font_fonte)
 
     # Linha decorativa
-    draw.rectangle([(W//2 - 100, H - 115), (W//2 + 100, H - 111)], fill=accent)
+    draw.rectangle([(W//2 - 100, H - 118), (W//2 + 100, H - 113)], fill=accent)
 
     # Hashtags
-    font_hash = carregar_fonte("Inter-Regular.ttf", 20)
-    draw.rectangle([(0, H - 90), (W, H)], fill=(0, 0, 0, 40))
-    draw.text((W // 2, H - 55), "#IA #AI #Noticias #Tecnologia",
+    font_hash = carregar_fonte("Inter-Regular.ttf", 24)
+    draw.rectangle([(0, H - 95), (W, H)], fill=(0, 0, 0, 40))
+    draw.text((W // 2, H - 58), "#IA #AI #Noticias #Tecnologia",
               fill=paleta["hashtag"], anchor="mt", font=font_hash)
 
 
@@ -400,43 +400,43 @@ def _desenhar_encerramento(draw, W, H, slide, paleta):
 def _desenhar_devimpact(draw, W, H, slide, paleta):
     """Slide 'O que muda pro Dev'."""
     accent = hex_to_rgb(paleta["accent"])
-    font_tit = carregar_fonte("Inter-Bold.ttf", 36)
-    font_texto = carregar_fonte("Inter-Regular.ttf", 26)
-    draw.text((W // 2, 140), "🧑‍💻", fill="white", anchor="mt",
-              font=carregar_fonte("Inter-Regular.ttf", 60))
-    draw.text((W // 2, 230), slide.get("titulo", "O que muda pro Dev"),
+    font_tit = carregar_fonte("Inter-Bold.ttf", 44)
+    font_texto = carregar_fonte("Inter-Regular.ttf", 32)
+    draw.text((W // 2, 130), "🧑‍💻", fill="white", anchor="mt",
+              font=carregar_fonte("Inter-Regular.ttf", 72))
+    draw.text((W // 2, 235), slide.get("titulo", "O que muda pro Dev"),
               fill="white", anchor="mt", font=font_tit)
-    draw.rectangle([(W//2 - 100, 270), (W//2 + 100, 274)], fill=accent)
+    draw.rectangle([(W//2 - 120, 280), (W//2 + 120, 285)], fill=accent)
     texto = slide.get("texto", "")
     if texto:
-        yt = 320
+        yt = 330
         for linha in texto.split("\n"):
             if linha.strip():
                 draw.text((W // 2, yt), linha.strip(), fill="#cccccc",
                           anchor="mt", font=font_texto)
-                yt += 40
-    font_hash = carregar_fonte("Inter-Regular.ttf", 22)
-    draw.rectangle([(0, H - 90), (W, H)], fill=(0, 0, 0, 40))
-    draw.text((W // 2, H - 55), "#Dev #Programacao #Carreira #Tecnologia",
+                yt += 48
+    font_hash = carregar_fonte("Inter-Regular.ttf", 26)
+    draw.rectangle([(0, H - 100), (W, H)], fill=(0, 0, 0, 40))
+    draw.text((W // 2, H - 60), "#Dev #Programacao #Carreira #Tecnologia",
               fill=paleta["hashtag"], anchor="mt", font=font_hash)
 
 
 def _desenhar_separador(draw, W, H, slide, paleta):
     """Slide separador de categoria."""
     accent = hex_to_rgb(paleta["accent"])
-    font_emoji = carregar_fonte("Inter-Regular.ttf", 72)
-    font_tit = carregar_fonte("Inter-Bold.ttf", 48)
-    font_sub = carregar_fonte("Inter-Regular.ttf", 24)
-    draw.text((W // 2, H // 2 - 80), slide.get("emoji", "🏗️"),
+    font_emoji = carregar_fonte("Inter-Regular.ttf", 86)
+    font_tit = carregar_fonte("Inter-Bold.ttf", 58)
+    font_sub = carregar_fonte("Inter-Regular.ttf", 28)
+    draw.text((W // 2, H // 2 - 100), slide.get("emoji", "🏗️"),
               fill="white", anchor="mm", font=font_emoji)
     draw.text((W // 2, H // 2), slide.get("titulo", ""),
               fill="white", anchor="mm", font=font_tit)
-    draw.rectangle([(W//2 - 100, H//2 + 40), (W//2 + 100, H//2 + 44)], fill=accent)
-    draw.text((W // 2, H // 2 + 80), slide.get("subtitulo", ""),
+    draw.rectangle([(W//2 - 120, H//2 + 50), (W//2 + 120, H//2 + 55)], fill=accent)
+    draw.text((W // 2, H // 2 + 100), slide.get("subtitulo", ""),
               fill="#888888", anchor="mm", font=font_sub)
-    font_hash = carregar_fonte("Inter-Regular.ttf", 22)
-    draw.rectangle([(0, H - 90), (W, H)], fill=(0, 0, 0, 40))
-    draw.text((W // 2, H - 55), "#IA #AI #Noticias #Tecnologia",
+    font_hash = carregar_fonte("Inter-Regular.ttf", 26)
+    draw.rectangle([(0, H - 100), (W, H)], fill=(0, 0, 0, 40))
+    draw.text((W // 2, H - 60), "#IA #AI #Noticias #Tecnologia",
               fill=paleta["hashtag"], anchor="mt", font=font_hash)
 
 
