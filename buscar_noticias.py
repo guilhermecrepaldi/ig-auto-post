@@ -1,6 +1,6 @@
 """
-Busca as principais notícias de IA do dia e retorna as top 4.
-Usa web scraping via requests + fallback para frases simuladas.
+Busca as principais notícias de IA do dia organizadas por categoria.
+Categorias: arquitetura, hardware, tendencias, cripto (futuro)
 """
 import json
 import re
@@ -11,121 +11,185 @@ from pathlib import Path
 
 PASTA = Path(__file__).parent
 
+# Palavras-chave por categoria para filtrar noticias
+CATEGORIAS = {
+    "arquitetura": {
+        "palavras": ["modelo", "llm", "framework", "arquitetura", "transformer",
+                     "neural", "treinamento", "treino", "fine-tuning", "open source",
+                     "algoritmo", "raciocinio", "reasoning", "agente", "agent",
+                     "deep learning", "machine learning"],
+        "emoji": "🏗️",
+        "cor": "#00d4ff",
+        "descricao": "Arquitetura de IA"
+    },
+    "hardware": {
+        "palavras": ["chip", "gpu", "nvidia", "amd", "processador", "hardware",
+                     "data center", "datacenter", "energia", "consumo", "servidor",
+                     "memoria", "inferencia", "treinamento", "computacao",
+                     "edge", "iot", "quantico", "quantum"],
+        "emoji": "⚙️",
+        "cor": "#22c55e",
+        "descricao": "Hardware e Infraestrutura"
+    },
+    "tendencias": {
+        "palavras": ["mercado", "investimento", "startup", "regulacao", "regulação",
+                     "lei", "governo", "openai", "google", "meta", "microsoft",
+                     "amazon", "apple", "inovacao", "inovação", "futuro",
+                     "emprego", "trabalho", "educacao", "educação",
+                     "copilot", "assistente", "chatbot", "ferramenta"],
+        "emoji": "📈",
+        "cor": "#f59e0b",
+        "descricao": "Tendencias e Mercado"
+    },
+    "cripto": {
+        "palavras": ["bitcoin", "criptomoeda", "blockchain", "ethereum", "web3",
+                     "defi", "nft", "token", "crypto", "mineracao", "mineração",
+                     "ledger", "smart contract", "solana", "cardano"],
+        "emoji": "₿",
+        "cor": "#fbbf24",
+        "descricao": "Criptomoedas e Blockchain"
+    }
+}
+
+NOMES_CATEGORIAS = list(CATEGORIAS.keys())
+
 
 def buscar_noticias(config):
-    """Busca notícias de IA do dia, retorna lista com as 4 melhores."""
-    print("Buscando noticias de IA...")
+    """Busca noticias do dia, retorna ate 6 organizadas por categoria."""
+    print("Buscando noticias de IA por categoria...")
 
     todas_noticias = []
 
-    # Tenta buscar via Google News RSS
+    # 1. Google News RSS
     try:
         import xml.etree.ElementTree as ET
-        url = "https://news.google.com/rss/search?q=inteligencia+artificial+IA+2026&hl=pt-BR&gl=BR"
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            data = resp.read().decode("utf-8", errors="replace")
-            root = ET.fromstring(data)
-            for item in root.iter("item"):
-                title = item.findtext("title", "")
-                desc = item.findtext("description", "")
-                link = item.findtext("link", "")
-                # Limpar HTML do titulo e resumo
-                title_limpo = re.sub(r'&nbsp;|&amp;|&lt;|&gt;|&quot;|&#\d+;', ' ', title)
-                title_limpo = re.sub(r'\s+', ' ', title_limpo).strip()
-                # Limpar HTML do resumo
-                desc_limpo = re.sub(r'<[^>]+>', '', desc)
-                desc_limpo = re.sub(r'&nbsp;|&amp;|&lt;|&gt;|&quot;|&#\d+;', ' ', desc_limpo)
-                desc_limpo = re.sub(r'\s+', ' ', desc_limpo).strip()[:200]
-                if title_limpo and len(title_limpo) > 15:
-                    todas_noticias.append({
-                        "titulo": title_limpo,
-                        "resumo": desc_limpo if desc_limpo else title_limpo[:200],
-                        "url": link,
-                        "fonte": extrair_fonte(link)
-                    })
+        queries = [
+            "inteligencia+artificial+IA",
+            "machine+learning+deep+learning",
+            "hardware+GPU+chip+IA",
+            "mercado+IA+tecnologia",
+        ]
+        for q in queries:
+            url = f"https://news.google.com/rss/search?q={q}&hl=pt-BR&gl=BR"
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = resp.read().decode("utf-8", errors="replace")
+                root = ET.fromstring(data)
+                for item in root.iter("item"):
+                    title = item.findtext("title", "")
+                    desc = item.findtext("description", "")
+                    link = item.findtext("link", "")
+                    pubdate = item.findtext("pubDate", "")
+
+                    # Limpar HTML
+                    title_limpo = re.sub(r'&nbsp;|&amp;|&lt;|&gt;|&quot;|&#\d+;', ' ', title)
+                    title_limpo = re.sub(r'\s+', ' ', title_limpo).strip()
+                    desc_limpo = re.sub(r'<[^>]+>', '', desc)
+                    desc_limpo = re.sub(r'&nbsp;|&amp;|&lt;|&gt;|&quot;|&#\d+;', ' ', desc_limpo)
+                    desc_limpo = re.sub(r'\s+', ' ', desc_limpo).strip()[:200]
+
+                    # Parse data
+                    data_obj = None
+                    if pubdate:
+                        try:
+                            data_obj = datetime.strptime(pubdate.strip()[:25], "%a, %d %b %Y %H:%M:%S")
+                        except:
+                            pass
+
+                    if title_limpo and len(title_limpo) > 20:
+                        todas_noticias.append({
+                            "titulo": title_limpo,
+                            "resumo": desc_limpo if desc_limpo else title_limpo[:200],
+                            "url": link,
+                            "fonte": extrair_fonte(link),
+                            "data": data_obj,
+                            "data_str": data_obj.strftime("%d/%m/%Y") if data_obj else datetime.now().strftime("%d/%m/%Y")
+                        })
         print(f"   Google News: {len(todas_noticias)} noticias")
     except Exception as e:
         print(f"   Google News falhou: {e}")
 
-    # Fallback: Hacker News API
-    if len(todas_noticias) < 4:
-        try:
-            url = "https://hacker-news.firebaseio.com/v0/topstories.json"
-            with urllib.request.urlopen(url, timeout=10) as resp:
-                ids = json.loads(resp.read())[:30]
+    # 2. Classificar por categoria
+    categorizadas = {cat: [] for cat in NOMES_CATEGORIAS}
 
-            for item_id in ids:
-                url = f"https://hacker-news.firebaseio.com/v0/item/{item_id}.json"
-                with urllib.request.urlopen(url, timeout=5) as resp:
-                    data = json.loads(resp.read())
-                title = data.get("title", "")
-                url_item = data.get("url", f"https://news.ycombinator.com/item?id={item_id}")
-                if title and ("AI" in title or "intelligence" in title.lower() or "model" in title.lower() or "learning" in title.lower() or "GPT" in title or "neural" in title.lower()):
-                    todas_noticias.append({
-                        "titulo": title,
-                        "resumo": title[:200],
-                        "url": url_item,
-                        "fonte": "Hacker News"
-                    })
-            print(f"   Hacker News: +{len(todas_noticias)}")
-        except Exception as e:
-            print(f"   Hacker News falhou: {e}")
-
-    # Fallback final: frases simuladas (garante sempre funcionar)
-    if len(todas_noticias) < 4:
-        print("   Usando fallback local (frases pre-definidas)")
-        fallbacks = [
-            {"titulo": "Novo modelo de IA ultrapassa GPT-5 em raciocinio logico",
-             "resumo": "Pesquisadores anunciaram um modelo que supera o GPT-5 em benchmarks de raciocinio, marcando um novo marco na inteligencia artificial.",
-             "url": "https://example.com/ai-breakthrough", "fonte": "TechCrunch"},
-            {"titulo": "DeepSeek lanca V4 Flash com contexto de 128K tokens",
-             "resumo": "A DeepSeek lancou sua nova geracao de modelos com suporte a 128K tokens de contexto e custo 10x menor que concorrentes.",
-             "url": "https://example.com/deepseek-v4", "fonte": "The Verge"},
-            {"titulo": "Google apresenta IA capaz de programar autonomamente",
-             "resumo": "O novo sistema de IA do Google consegue escrever e debugar codigo complexo sem intervencao humana, revolucionando o desenvolvimento.",
-             "url": "https://example.com/google-ai-coding", "fonte": "Wired"},
-            {"titulo": "IA local com Ollama atinge paridade com modelos em nuvem",
-             "resumo": "Modelos rodando localmente via Ollama agora competem em qualidade com solucoes em nuvem, gracas a novos metodos de quantizacao.",
-             "url": "https://example.com/local-ai", "fonte": "Ars Technica"},
-            {"titulo": "NVIDIA revela novo chip especifico para inferencia de IA",
-             "resumo": "O novo chip da NVIDIA promete 5x mais performance em inferencia de LLMs com consumo energetico reduzido.",
-             "url": "https://example.com/nvidia-chip", "fonte": "Tom's Hardware"},
-            {"titulo": "OpenAI libera versao gratuita do ChatGPT com busca na web",
-             "resumo": "A versao gratuita do ChatGPT agora inclui busca em tempo real na web, tornando a informacao mais acessivel.",
-             "url": "https://example.com/openai-free", "fonte": "The Verge"},
-            {"titulo": "Framework open-source promete agentes de IA mais seguros",
-             "resumo": "Novo framework de codigo aberto implementa controles de seguranca avancados para agentes autonomos de IA.",
-             "url": "https://example.com/ai-safety", "fonte": "GitHub Blog"},
-            {"titulo": "Cientistas usam IA para descobrir novo material para baterias",
-             "resumo": "Pesquisadores utilizaram machine learning para identificar um novo material que triplica a capacidade de baterias de ions de litio.",
-             "url": "https://example.com/ai-battery", "fonte": "Nature"},
-        ]
-        todas_noticias.extend(fallbacks)
-
-    # Deduplicar
-    noticias_unicas = []
-    vistos = set()
     for n in todas_noticias:
-        chave = n["titulo"].lower()[:60]
-        if chave not in vistos:
-            vistos.add(chave)
-            noticias_unicas.append(n)
+        titulo_lower = n["titulo"].lower()
+        resumo_lower = n["resumo"].lower()
+        texto = titulo_lower + " " + resumo_lower
 
-    print(f"   Total unicas: {len(noticias_unicas)}")
+        for cat_nome, cat_info in CATEGORIAS.items():
+            for palavra in cat_info["palavras"]:
+                if palavra in texto:
+                    categorizadas[cat_nome].append(n)
+                    break
 
-    # Selecionar e formatar top 4
+    # 3. Selecionar a MELHOR noticia de cada categoria
+    # (mais recente, titulo mais informativo)
+    selecionadas = []
+    for cat_nome in NOMES_CATEGORIAS:
+        candidatos = categorizadas[cat_nome]
+        if not candidatos:
+            continue
+        # Ordenar por data (mais recente primeiro), depois por tamanho do titulo
+        candidatos.sort(key=lambda x: (
+            -(x["data"].timestamp() if x["data"] else 0),
+            -len(x["titulo"])
+        ))
+        melhor = candidatos[0]
+        melhor["categoria"] = cat_nome
+        selecionadas.append(melhor)
+
+    print(f"   Classificadas: {len(selecionadas)} noticias em {len(set(n['categoria'] for n in selecionadas))} categorias")
+
+    # 4. Fallback se faltar categorias
+    if len(selecionadas) < 3:
+        print("   Poucas categorias preenchidas, completando com fallbacks")
+        fallbacks = gerar_fallbacks()
+        cats_presentes = set(n["categoria"] for n in selecionadas)
+        for fb in fallbacks:
+            if fb["categoria"] not in cats_presentes:
+                selecionadas.append(fb)
+                cats_presentes.add(fb["categoria"])
+
+    # 5. Formatar resultado (max 6)
+    emojis = ["🤖", "⚙️", "📈", "₿", "🧠", "🚀"]
     resultado = []
-    emojis = ["🤖", "⚡", "🧠", "🚀"]
-    for i, n in enumerate(noticias_unicas[:4]):
+
+    # Primeiro slide: CAPA
+    resultado.append({
+        "numero": 0,
+        "tipo": "capa",
+        "titulo": "AI NEWS",
+        "subtitulo": "As principais noticias de IA",
+        "data_str": datetime.now().strftime("%d/%m/%Y"),
+        "emoji": "📡",
+        "fonte": "",
+        "resumo": ""
+    })
+
+    for i, n in enumerate(selecionadas[:5]):
         resultado.append({
             "numero": i + 1,
+            "tipo": "noticia",
+            "categoria": n.get("categoria", "tendencias"),
             "titulo": limpar_titulo(n["titulo"]),
             "resumo": n["resumo"][:150],
             "url": n.get("url", ""),
             "fonte": n.get("fonte", ""),
-            "emoji": emojis[i]
+            "data_str": n.get("data_str", datetime.now().strftime("%d/%m/%Y")),
+            "emoji": emojis[i % len(emojis)],
         })
+
+    # Ultimo slide: ENCERRAMENTO
+    resultado.append({
+        "numero": len(resultado),
+        "tipo": "encerramento",
+        "titulo": "Fique por dentro",
+        "subtitulo": "Siga @crepaldi.ai.news para mais",
+        "emoji": "🔥",
+        "fonte": "",
+        "resumo": ""
+    })
 
     return resultado
 
@@ -133,7 +197,6 @@ def buscar_noticias(config):
 def extrair_fonte(url):
     if not url:
         return ""
-    # Google News RSS -> tenta extrair do link interno
     if "news.google.com" in url:
         m = re.search(r'[?&]url=([^&]+)', url)
         if m:
@@ -152,6 +215,41 @@ def extrair_fonte(url):
 def limpar_titulo(titulo):
     for p in ["🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "⚫", "🆕", "🚨", "BREAKING:", "URGENTE:"]:
         titulo = titulo.replace(p, "").strip()
-    # Remove conteudo apos "|" ou "-" que seja nome de site
     titulo = re.sub(r'\s*[|\-–]\s*(TechCrunch|The Verge|Wired|Reuters|BBC|CNN|NYT|Forbes|Bloomberg).*$', '', titulo, flags=re.IGNORECASE)
     return titulo.strip().strip('"').strip("'")
+
+
+def gerar_fallbacks():
+    """Fallback local para cada categoria."""
+    from datetime import datetime, timedelta
+    hoje = datetime.now()
+    return [
+        {
+            "titulo": "Novos modelos de IA superam benchmarks com arquitetura inovadora",
+            "resumo": "Pesquisadores anunciaram avanços significativos em arquiteturas transformer com eficiencia energetica 10x maior.",
+            "url": "", "fonte": "TechCrunch",
+            "data": hoje, "data_str": hoje.strftime("%d/%m/%Y"),
+            "categoria": "arquitetura"
+        },
+        {
+            "titulo": "NVIDIA revela nova geracao de GPUs para data centers",
+            "resumo": "As novas GPUs prometem 5x mais performance em inferencia com consumo energetico 40% menor.",
+            "url": "", "fonte": "Tom's Hardware",
+            "data": hoje, "data_str": hoje.strftime("%d/%m/%Y"),
+            "categoria": "hardware"
+        },
+        {
+            "titulo": "Mercado global de IA deve atingir US$ 1 trilhao em 2026",
+            "resumo": "Relatorio aponta crescimento acelerado impulsionado por adocao empresarial e investimentos em infraestrutura.",
+            "url": "", "fonte": "Forbes",
+            "data": hoje, "data_str": hoje.strftime("%d/%m/%Y"),
+            "categoria": "tendencias"
+        },
+        {
+            "titulo": "Blockchain e IA: convergencia promete revolucionar setor financeiro",
+            "resumo": "Startups estao combinando blockchain com machine learning para criar sistemas financeiros autonomos e seguros.",
+            "url": "", "fonte": "CoinDesk",
+            "data": hoje, "data_str": hoje.strftime("%d/%m/%Y"),
+            "categoria": "cripto"
+        }
+    ]

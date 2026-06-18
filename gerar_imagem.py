@@ -1,12 +1,12 @@
 """
-Geração de imagem profissional para post do Instagram.
-6 templates visuais com paletas de cores, fontes Google e elementos decorativos.
-+ Carrossel de notícias (4 slides) para AI NEWS.
+Geracao de imagem profissional para post do Instagram.
+Suporta: posts simples + carrossel AI NEWS com categorias, datas e fundos contextuais.
 """
 import os
 import random
 import re
 import textwrap
+import math
 from pathlib import Path
 from datetime import datetime
 
@@ -15,50 +15,49 @@ TEMPLATES_DIR = PASTA / "templates"
 POSTS_DIR = PASTA / "posts"
 
 # ============================================================
-# PALETAS DE CORES POR TEMA
+# PALETAS POR CATEGORIA
 # ============================================================
-PALETAS = {
-    "dica": {
-        "bg_top": "#0a1628", "bg_bot": "#1a2a4a",
+PALETAS_CATEGORIA = {
+    "capa": {
+        "bg_top": "#0f0f23", "bg_bot": "#1a1a3e",
+        "accent": "#7c3aed", "secundaria": "#a855f7",
+        "hashtag": "#c084fc",
+    },
+    "arquitetura": {
+        "bg_top": "#0a1628", "bg_bot": "#0f2a4a",
         "accent": "#00d4ff", "secundaria": "#0088cc",
-        "hashtag_cor": "#66e0ff", "box_fill": "#0d1f3d",
+        "hashtag": "#66e0ff",
     },
-    "projeto": {
-        "bg_top": "#1a0a2e", "bg_bot": "#2d1b4e",
-        "accent": "#a855f7", "secundaria": "#7c3aed",
-        "hashtag_cor": "#c084fc", "box_fill": "#1f0f3a",
-    },
-    "reflexao": {
-        "bg_top": "#0a1a0a", "bg_bot": "#1a3a1a",
+    "hardware": {
+        "bg_top": "#0a1a0a", "bg_bot": "#0f3a0f",
         "accent": "#22c55e", "secundaria": "#16a34a",
-        "hashtag_cor": "#86efac", "box_fill": "#0f2a0f",
+        "hashtag": "#86efac",
     },
-    "case": {
-        "bg_top": "#1a1410", "bg_bot": "#3a2a1a",
+    "tendencias": {
+        "bg_top": "#1a1008", "bg_bot": "#3a2010",
         "accent": "#f59e0b", "secundaria": "#d97706",
-        "hashtag_cor": "#fcd34d", "box_fill": "#2a1f10",
+        "hashtag": "#fcd34d",
     },
-    "citacao": {
-        "bg_top": "#1a0a0a", "bg_bot": "#3a1a1a",
-        "accent": "#ef4444", "secundaria": "#dc2626",
-        "hashtag_cor": "#fca5a5", "box_fill": "#2a0f0f",
+    "cripto": {
+        "bg_top": "#1a0a00", "bg_bot": "#3a1a00",
+        "accent": "#fbbf24", "secundaria": "#f59e0b",
+        "hashtag": "#fde68a",
     },
-    "carrossel": {
-        "bg_top": "#0a0a1a", "bg_bot": "#1a1a3a",
-        "accent": "#06b6d4", "secundaria": "#0891b2",
-        "hashtag_cor": "#67e8f9", "box_fill": "#0d0d2b",
-    }
+    "encerramento": {
+        "bg_top": "#0a0a0a", "bg_bot": "#1a1a1a",
+        "accent": "#6b7280", "secundaria": "#4b5563",
+        "hashtag": "#9ca3af",
+    },
 }
 
-NOMES_TEMPLATES = list(PALETAS.keys())
-
-EMOJIS_TEMPLATE = {
-    "dica": ["💡", "⚡", "🔧", "🛠️", "📌"],
-    "projeto": ["🚀", "🔥", "⚙️", "🏗️", "📦"],
-    "reflexao": ["💭", "🌱", "🎯", "🧠", "💫"],
-    "case": ["📊", "🏆", "🎖️", "💼", "📈"],
-    "citacao": ["💬", "✨", "🌟", "📝", "🎭"],
-    "carrossel": ["📸", "🎬", "🔄", "1️⃣", "2️⃣"]
+# Pattern SVG-like por categoria (desenhado com Pillow)
+FUNDOS_PATTERN = {
+    "capa": "circuitos",       # linhas retas + circulos (placa mae)
+    "arquitetura": "rede",     # nos conectados (rede neural)
+    "hardware": "grade",       # grid de pontos (chip)
+    "tendencias": "ondas",     # ondas senoidais (grafico)
+    "cripto": "hexagono",      # hexagonos (blockchain)
+    "encerramento": "estrelas",# pontos aleatorios
 }
 
 
@@ -78,137 +77,118 @@ def carregar_fonte(nome, tamanho):
     return ImageFont.load_default()
 
 
-def hex_to_rgb(hex_color):
-    hex_color = hex_color.lstrip("#")
-    return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+def hex_to_rgb(h):
+    h = h.lstrip("#")
+    return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
 
 
 # ====================================================================
-# POST SIMPLES (legenda única com template)
+# FUNDOS CONTEXTUAIS (patterns geométricos)
 # ====================================================================
 
-def gerar_imagem_post(legenda, config):
-    POSTS_DIR.mkdir(exist_ok=True)
-    TEMPLATES_DIR.mkdir(exist_ok=True)
-
-    template_escolhido = random.choice(NOMES_TEMPLATES)
-    paleta = PALETAS[template_escolhido]
-    emoji = random.choice(EMOJIS_TEMPLATE[template_escolhido])
-
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    caminho = POSTS_DIR / f"post_{template_escolhido}_{timestamp}.jpg"
-
-    return _gerar_template_post(legenda, caminho, paleta, template_escolhido, emoji, config)
-
-
-def _gerar_template_post(legenda, caminho, paleta, template_nome, emoji, config):
-    from PIL import Image, ImageDraw, ImageFont
-
-    W, H = 1080, 1080
-    bg_top = hex_to_rgb(paleta["bg_top"])
-    bg_bot = hex_to_rgb(paleta["bg_bot"])
+def desenhar_fundo_contextual(draw, W, H, paleta, padrao):
+    """Desenha padrao geometrico de fundo baseado na categoria."""
     accent = hex_to_rgb(paleta["accent"])
     secundaria = hex_to_rgb(paleta["secundaria"])
-    box_fill = hex_to_rgb(paleta["box_fill"])
+    alpha = 12  # bem sutil
 
-    img = Image.new("RGB", (W, H), bg_top)
-    draw = ImageDraw.Draw(img)
+    if padrao == "circuitos":
+        # Linhas retas horizontais/verticais
+        for _ in range(20):
+            x = random.randint(0, W)
+            y = random.randint(0, H)
+            if random.random() > 0.5:
+                draw.line([(x, y), (x + random.randint(60, 200), y)],
+                          fill=accent + (alpha,), width=1)
+            else:
+                draw.line([(x, y), (x, y + random.randint(60, 200))],
+                          fill=accent + (alpha,), width=1)
+            # Circulo nas juncoes
+            draw.ellipse([x-4, y-4, x+4, y+4], fill=accent + (alpha + 5,))
 
-    # Gradiente
-    for y in range(H):
-        ratio = y / H
-        r = int(bg_top[0] + (bg_bot[0] - bg_top[0]) * ratio)
-        g = int(bg_top[1] + (bg_bot[1] - bg_top[1]) * ratio)
-        b = int(bg_top[2] + (bg_bot[2] - bg_top[2]) * ratio)
-        draw.line([(0, y), (W, y)], fill=(r, g, b))
+    elif padrao == "rede":
+        # Nos conectados
+            nos = [(random.randint(50, W-50), random.randint(50, H-50)) for _ in range(12)]
+            for (x1, y1) in nos:
+                for (x2, y2) in nos:
+                    if random.random() > 0.7:
+                        dist = math.sqrt((x2-x1)**2 + (y2-y1)**2)
+                        if dist < 300:
+                            draw.line([(x1, y1), (x2, y2)],
+                                      fill=secundaria + (alpha - 3,), width=1)
+            for (x, y) in nos:
+                draw.ellipse([x-6, y-6, x+6, y+6], fill=accent + (alpha + 5,))
 
-    # Padrão geométrico
-    for _ in range(12):
-        cx = random.randint(0, W)
-        cy = random.randint(0, H)
-        raio = random.randint(40, 100)
-        draw.ellipse([cx-raio, cy-raio, cx+raio, cy+raio],
-                      fill=None, outline=accent + (12,), width=1)
+    elif padrao == "grade":
+        # Grid de pontos (chip)
+        for x in range(0, W, 60):
+            for y in range(0, H, 60):
+                offset_x = random.randint(-5, 5)
+                offset_y = random.randint(-5, 5)
+                draw.ellipse([x+offset_x-2, y+offset_y-2, x+offset_x+2, y+offset_y+2],
+                             fill=accent + (alpha,))
 
-    # Barra superior
-    draw.rectangle([(60, 60), (W - 60, 66)], fill=accent)
+    elif padrao == "ondas":
+        # Ondas senoidais (grafico)
+        for onda in range(3):
+            y_base = H * (0.3 + onda * 0.2)
+            pontos = []
+            for x in range(0, W, 10):
+                y = y_base + math.sin(x * 0.02 + onda * 2) * 40
+                pontos.append((x, y))
+            for i in range(len(pontos) - 1):
+                draw.line([pontos[i], pontos[i+1]],
+                          fill=accent + (alpha - 3,), width=1)
 
-    # Avatar
-    ax, ay = 100, 160
-    draw.ellipse([ax-40, ay-40, ax+40, ay+40], fill=accent, outline=secundaria, width=3)
-    draw.text((ax, ay), emoji, fill="white", anchor="mm")
+    elif padrao == "hexagono":
+        # Hexagonos (blockchain)
+        for _ in range(30):
+            cx = random.randint(50, W-50)
+            cy = random.randint(50, H-50)
+            raio = random.randint(20, 50)
+            pontos = []
+            for ang in range(0, 360, 60):
+                rad = math.radians(ang)
+                px = cx + raio * math.cos(rad)
+                py = cy + raio * math.sin(rad)
+                pontos.append((px, py))
+            for i in range(6):
+                draw.line([pontos[i], pontos[(i+1) % 6]],
+                          fill=accent + (alpha - 2,), width=1)
 
-    # Tag + subtag
-    font_tag = carregar_fonte("Inter-Bold.ttf", 22)
-    draw.text((ax + 55, ay - 12), template_nome.upper(), fill=accent, anchor="lm", font=font_tag)
-    font_sub = carregar_fonte("Inter-Regular.ttf", 16)
-    subtags = {"dica": "DICA RAPIDA", "projeto": "PROJETO", "reflexao": "REFLEXAO",
-               "case": "CASE", "citacao": "CITACAO", "carrossel": "CARROSSEL"}
-    draw.text((ax + 55, ay + 12), subtags.get(template_nome, "POST"), fill="#888888", anchor="lm", font=font_sub)
-
-    # Box de fundo
-    for y in range(260, 780):
-        alpha_box = max(0, 40 - int((y - 260) / 520 * 20))
-        draw.line([(80, y), (1000, y)], fill=box_fill[:3] + (alpha_box,))
-
-    # Texto
-    font_titulo = carregar_fonte("Inter-SemiBold.ttf", 22)
-    font_texto = carregar_fonte("Inter-Regular.ttf", 40)
-    legenda_limpa = re.sub(r'[^\x00-\x7F]+', '', legenda).strip()
-    linhas = textwrap.wrap(legenda_limpa, width=30)
-
-    if linhas:
-        titulo = linhas[0]
-        if len(titulo) > 35:
-            m = re.match(r'^([^.!?]+[.!?])', titulo)
-            titulo = m.group(1) if m else titulo[:35] + "\u2026"
-        draw.text((W // 2, 290), titulo, fill=accent, anchor="mt", font=font_titulo)
-        yt = 350
-        for linha in linhas[1:6]:
-            draw.text((W // 2, yt), linha, fill="white", anchor="mt", font=font_texto)
-            yt += 55
-
-    # Linha inferior
-    draw.rectangle([(W//2 - 150, 790), (W//2 + 150, 794)], fill=accent)
-
-    # Credito
-    font_cred = carregar_fonte("Inter-Regular.ttf", 18)
-    draw.text((W // 2, 830), f"@{config.get('instagram', {}).get('username', 'ig-auto-post')}",
-              fill="#666666", anchor="mt", font=font_cred)
-
-    # Hashtags
-    font_hash = carregar_fonte("Inter-Regular.ttf", 28)
-    hashtags = config.get("post", {}).get("hashtags_padrao", ["dev", "python"])
-    hash_text = "  ".join(f"#{h}" for h in hashtags[:4])
-    draw.rectangle([(0, H - 100), (W, H)], fill=bg_bot[:3] + (180,))
-    draw.text((W // 2, H - 60), hash_text, fill=paleta["hashtag_cor"], anchor="mt", font=font_hash)
-
-    # Data
-    font_data = carregar_fonte("Inter-Regular.ttf", 16)
-    draw.text((W - 40, H - 30), datetime.now().strftime("%d/%m/%Y - %H:%M"),
-              fill="#444444", anchor="rb", font=font_data)
-
-    img.save(caminho, "JPEG", quality=92)
-    print(f"   Imagem gerada [{template_nome}]: {caminho.name}")
-    return str(caminho)
+    else:  # estrelas / encerramento
+        for _ in range(40):
+            cx = random.randint(0, W)
+            cy = random.randint(0, H)
+            sz = random.randint(1, 3)
+            draw.ellipse([cx-sz, cy-sz, cx+sz, cy+sz], fill=accent + (alpha + 5,))
 
 
 # ====================================================================
-# CARROSSEL DE NOTICIAS (4 slides para AI NEWS)
+# CARROSSEL AI NEWS (6+ slides)
 # ====================================================================
 
 def gerar_carrossel_noticias(noticias, config):
-    """Gera 4 imagens de carrossel, uma para cada noticia."""
+    """Gera carrossel com capa + noticias + encerramento."""
     POSTS_DIR.mkdir(exist_ok=True)
     TEMPLATES_DIR.mkdir(exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     caminhos = []
 
-    for i, noticia in enumerate(noticias[:4]):
-        paleta = list(PALETAS.values())[i % len(PALETAS)]
-        emoji = noticia.get("emoji", "📰")
-        caminho = POSTS_DIR / f"carrossel_{i+1}_{timestamp}.jpg"
+    total_slides = len(noticias)
+
+    for idx, slide_data in enumerate(noticias):
+        tipo = slide_data.get("tipo", "noticia")
+        # Categoria correta: se for capa/en不忍, usa direto; se for noticia, usa a categoria da noticia
+        if tipo in ("capa", "encerramento"):
+            categoria = tipo
+        else:
+            categoria = slide_data.get("categoria", "tendencias")
+        paleta = PALETAS_CATEGORIA.get(categoria, PALETAS_CATEGORIA["tendencias"])
+        padrao = FUNDOS_PATTERN.get(categoria, "rede")
+
+        caminho = POSTS_DIR / f"ainews_{idx+1}_{timestamp}.jpg"
 
         from PIL import Image, ImageDraw, ImageFont
 
@@ -217,7 +197,6 @@ def gerar_carrossel_noticias(noticias, config):
         bg_bot = hex_to_rgb(paleta["bg_bot"])
         accent = hex_to_rgb(paleta["accent"])
         secundaria = hex_to_rgb(paleta["secundaria"])
-        box_fill = hex_to_rgb(paleta["box_fill"])
 
         img = Image.new("RGB", (W, H), bg_top)
         draw = ImageDraw.Draw(img)
@@ -230,74 +209,214 @@ def gerar_carrossel_noticias(noticias, config):
             b = int(bg_top[2] + (bg_bot[2] - bg_top[2]) * ratio)
             draw.line([(0, y), (W, y)], fill=(r, g, b))
 
-        # Bolinhas indicadoras
-        for j in range(4):
-            cx = W // 2 - 60 + j * 40
-            cy = 50
-            cor = accent if j == i else (60, 60, 60)
-            draw.ellipse([cx - 8, cy - 8, cx + 8, cy + 8], fill=cor)
+        # Fundo contextual
+        desenhar_fundo_contextual(draw, W, H, paleta, padrao)
+
+        # Bolinhas de progresso
+        for j in range(total_slides):
+            cx = W // 2 - (total_slides * 20) + j * 40
+            cy = 40
+            cor = accent if j == idx else (50, 50, 50)
+            draw.ellipse([cx - 6, cy - 6, cx + 6, cy + 6], fill=cor)
 
         # Barra decorativa
-        draw.rectangle([(60, 80), (W - 60, 86)], fill=accent)
+        draw.rectangle([(60, 65), (W - 60, 70)], fill=accent)
 
-        # Badge AI NEWS
-        font_badge = carregar_fonte("Inter-Bold.ttf", 20)
-        draw.text((W // 2, 130), f"{emoji}  AI NEWS  {emoji}",
-                  fill=accent, anchor="mt", font=font_badge)
+        if tipo == "capa":
+            _desenhar_capa(draw, W, H, slide_data, paleta)
+        elif tipo == "encerramento":
+            _desenhar_encerramento(draw, W, H, slide_data, paleta)
+        else:
+            _desenhar_noticia(draw, W, H, slide_data, paleta)
 
-        # Numero
-        font_num = carregar_fonte("Inter-Bold.ttf", 60)
-        draw.text((W // 2, 200), f"0{noticia['numero']}", fill=secundaria,
-                  anchor="mt", font=font_num)
-
-        # Fonte
-        if noticia.get("fonte"):
-            font_fonte = carregar_fonte("Inter-Regular.ttf", 18)
-            draw.text((W // 2, 260), f"Fonte: {noticia['fonte']}",
-                      fill="#888888", anchor="mt", font=font_fonte)
-
-        # Titulo
-        font_tit = carregar_fonte("Inter-SemiBold.ttf", 34)
-        tit_linhas = textwrap.wrap(noticia["titulo"], width=28)
-        yt = 320
-        for linha in tit_linhas[:4]:
-            draw.text((W // 2, yt), linha, fill="white", anchor="mt", font=font_tit)
-            yt += 46
-
-        # Resumo
-        font_res = carregar_fonte("Inter-Regular.ttf", 24)
-        res_linhas = textwrap.wrap(noticia["resumo"], width=40)
-        yr = yt + 25
-        for linha in res_linhas[:3]:
-            draw.text((W // 2, yr), linha, fill="#cccccc", anchor="mt", font=font_res)
-            yr += 36
-
-        # Linha decorativa
-        draw.rectangle([(W//2 - 120, 780), (W//2 + 120, 784)], fill=accent)
-
-        # CTA
-        font_cta = carregar_fonte("Inter-Regular.ttf", 22)
-        cta_lista = [
-            "Saiba mais em crepaldi.ai.news",
-            "IA que transforma",
-            "Leia o artigo completo",
-            "Fique por dentro da IA",
-        ]
-        draw.text((W // 2, 820), cta_lista[i % 4], fill="#666666", anchor="mt", font=font_cta)
-
-        # Hashtags
-        font_hash = carregar_fonte("Inter-Regular.ttf", 26)
-        draw.rectangle([(0, H - 100), (W, H)], fill=bg_bot[:3] + (180,))
-        draw.text((W // 2, H - 60), "#IA #AI #Noticias #Tecnologia #MachineLearning",
-                  fill=paleta["hashtag_cor"], anchor="mt", font=font_hash)
-
-        # Slide
-        font_sl = carregar_fonte("Inter-Regular.ttf", 16)
-        draw.text((W - 40, H - 30), f"Slide {i+1}/4",
-                  fill="#444444", anchor="rb", font=font_sl)
+        # Slide counter
+        font_sl = carregar_fonte("Inter-Regular.ttf", 14)
+        draw.text((W - 30, H - 25), f"{idx+1}/{total_slides}",
+                  fill="#555555", anchor="rb", font=font_sl)
 
         img.save(caminho, "JPEG", quality=92)
-        print(f"   Slide {i+1}/4: {caminho.name}")
+        print(f"   Slide {idx+1}/{total_slides} [{categoria}]: {caminho.name}")
         caminhos.append(str(caminho))
 
     return caminhos
+
+
+def _desenhar_capa(draw, W, H, slide, paleta):
+    """Slide de capa do carrossel."""
+    accent = hex_to_rgb(paleta["accent"])
+    secundaria = hex_to_rgb(paleta["secundaria"])
+
+    font_tit = carregar_fonte("Inter-Bold.ttf", 72)
+    font_sub = carregar_fonte("Inter-Regular.ttf", 28)
+    font_data = carregar_fonte("Inter-Regular.ttf", 20)
+
+    # Logo grande
+    draw.text((W // 2, H // 2 - 100), "AI NEWS",
+              fill="white", anchor="mm", font=font_tit)
+
+    # Linha decorativa
+    draw.rectangle([(W//2 - 120, H//2 - 25), (W//2 + 120, H//2 - 20)], fill=accent)
+
+    # Subtitulo
+    draw.text((W // 2, H // 2 + 40), slide.get("subtitulo", "As principais noticias de IA"),
+              fill="#aaaaaa", anchor="mm", font=font_sub)
+
+    # Data
+    data = slide.get("data_str", datetime.now().strftime("%d/%m/%Y"))
+    draw.text((W // 2, H // 2 + 100), data,
+              fill="#666666", anchor="mm", font=font_data)
+
+    # Hashtags no rodape
+    font_hash = carregar_fonte("Inter-Regular.ttf", 22)
+    draw.rectangle([(0, H - 90), (W, H)], fill=(10, 10, 20, 180))
+    draw.text((W // 2, H - 55), "#IA #AI #Noticias #Tecnologia",
+              fill=paleta["hashtag"], anchor="mt", font=font_hash)
+
+
+def _desenhar_noticia(draw, W, H, slide, paleta):
+    """Slide de noticia com categoria, titulo, resumo, data, fonte."""
+    accent = hex_to_rgb(paleta["accent"])
+    secundaria = hex_to_rgb(paleta["secundaria"])
+
+    # Badge de categoria
+    font_cat = carregar_fonte("Inter-Bold.ttf", 16)
+    cat_info = slide.get("categoria", "tendencias").upper()
+    draw.text((W // 2, 120), f"  {cat_info}  ",
+              fill="white", anchor="mt", font=font_cat)
+    # Fundo do badge
+    bx1 = W//2 - 90
+    bx2 = W//2 + 90
+    draw.rectangle([(bx1, 105), (bx2, 140)], fill=secundaria + (60,))
+    draw.text((W // 2, 122), f"  {cat_info}  ",
+              fill=accent, anchor="mt", font=font_cat)
+
+    # Data da noticia
+    font_data = carregar_fonte("Inter-Regular.ttf", 18)
+    data = slide.get("data_str", "")
+    draw.text((W // 2, 170), f"📅 {data}",
+              fill="#888888", anchor="mt", font=font_data)
+
+    # Emoji grande
+    font_emoji = carregar_fonte("Inter-Regular.ttf", 50)
+    emoji = slide.get("emoji", "📰")
+    draw.text((W // 2, 230), emoji, fill=accent, anchor="mt", font=font_emoji)
+
+    # Titulo
+    font_tit = carregar_fonte("Inter-SemiBold.ttf", 32)
+    tit_linhas = textwrap.wrap(slide["titulo"], width=30)
+    yt = 300
+    for linha in tit_linhas[:4]:
+        draw.text((W // 2, yt), linha, fill="white", anchor="mt", font=font_tit)
+        yt += 42
+
+    # Resumo (se disponivel e diferente do titulo)
+    resumo = slide.get("resumo", "")
+    if resumo:
+        tit_curto = re.sub(r'[^a-zA-Z0-9]', '', slide["titulo"][:40].lower())
+        res_curto = re.sub(r'[^a-zA-Z0-9]', '', resumo[:40].lower())
+        if tit_curto != res_curto[:len(tit_curto)]:
+            font_res = carregar_fonte("Inter-Regular.ttf", 22)
+            res_linhas = textwrap.wrap(resumo, width=42)
+            yr = yt + 20
+            for linha in res_linhas[:3]:
+                draw.text((W // 2, yr), linha, fill="#bbbbbb", anchor="mt", font=font_res)
+                yr += 32
+
+    # Fonte
+    fonte = slide.get("fonte", "")
+    if fonte:
+        font_fonte = carregar_fonte("Inter-Regular.ttf", 16)
+        draw.text((W // 2, H - 140), f"Fonte: {fonte}",
+                  fill="#555555", anchor="mt", font=font_fonte)
+
+    # Linha decorativa
+    draw.rectangle([(W//2 - 100, H - 115), (W//2 + 100, H - 111)], fill=accent)
+
+    # Hashtags
+    font_hash = carregar_fonte("Inter-Regular.ttf", 22)
+    draw.rectangle([(0, H - 90), (W, H)], fill=(0, 0, 0, 40))
+    draw.text((W // 2, H - 55), "#IA #AI #Noticias #Tecnologia",
+              fill=paleta["hashtag"], anchor="mt", font=font_hash)
+
+
+def _desenhar_encerramento(draw, W, H, slide, paleta):
+    """Slide final de encerramento."""
+    accent = hex_to_rgb(paleta["accent"])
+    secundaria = hex_to_rgb(paleta["secundaria"])
+
+    font_tit = carregar_fonte("Inter-Bold.ttf", 48)
+    font_sub = carregar_fonte("Inter-Regular.ttf", 28)
+    font_cta = carregar_fonte("Inter-Regular.ttf", 22)
+
+    draw.text((W // 2, H // 2 - 80), slide.get("emoji", "🔥"),
+              fill="white", anchor="mm",
+              font=carregar_fonte("Inter-Regular.ttf", 60))
+
+    draw.text((W // 2, H // 2), slide.get("titulo", "Fique por dentro"),
+              fill="white", anchor="mm", font=font_tit)
+
+    draw.text((W // 2, H // 2 + 70),
+              slide.get("subtitulo", "Siga para mais noticias"),
+              fill="#888888", anchor="mm", font=font_sub)
+
+    draw.rectangle([(W//2 - 150, H//2 + 115), (W//2 + 150, H//2 + 119)], fill=accent)
+
+    draw.text((W // 2, H // 2 + 160),
+              "crepaldi.ai.news",
+              fill="#555555", anchor="mm", font=font_cta)
+
+
+# ====================================================================
+# POST SIMPLES (legacy)
+# ====================================================================
+
+def gerar_imagem_post(legenda, config):
+    """Post unico com template aleatorio."""
+    POSTS_DIR.mkdir(exist_ok=True)
+    TEMPLATES_DIR.mkdir(exist_ok=True)
+
+    paleta = list(PALETAS_CATEGORIA.values())[random.randint(0, 3)]
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    caminho = POSTS_DIR / f"post_{timestamp}.jpg"
+
+    from PIL import Image, ImageDraw, ImageFont
+
+    W, H = 1080, 1080
+    bg_top = hex_to_rgb(paleta["bg_top"])
+    bg_bot = hex_to_rgb(paleta["bg_bot"])
+    accent = hex_to_rgb(paleta["accent"])
+    secundaria = hex_to_rgb(paleta["secundaria"])
+
+    img = Image.new("RGB", (W, H), bg_top)
+    draw = ImageDraw.Draw(img)
+
+    for y in range(H):
+        ratio = y / H
+        r = int(bg_top[0] + (bg_bot[0] - bg_top[0]) * ratio)
+        g = int(bg_top[1] + (bg_bot[1] - bg_top[1]) * ratio)
+        b = int(bg_top[2] + (bg_bot[2] - bg_top[2]) * ratio)
+        draw.line([(0, y), (W, y)], fill=(r, g, b))
+
+    font_tit = carregar_fonte("Inter-SemiBold.ttf", 22)
+    font_texto = carregar_fonte("Inter-Regular.ttf", 36)
+    legenda_limpa = re.sub(r'[^\x00-\x7F]+', '', legenda).strip()
+    linhas = textwrap.wrap(legenda_limpa, width=30)
+
+    if linhas:
+        titulo = linhas[0]
+        if len(titulo) > 35:
+            m = re.match(r'^([^.!?]+[.!?])', titulo)
+            titulo = m.group(1) if m else titulo[:35] + "\u2026"
+        draw.text((W//2, 200), titulo, fill=accent, anchor="mt", font=font_tit)
+        yt = 260
+        for linha in linhas[1:6]:
+            draw.text((W//2, yt), linha, fill="white", anchor="mt", font=font_texto)
+            yt += 50
+
+    draw.text((W//2, H-80), f"@{config.get('instagram',{}).get('username','ig-auto-post')}",
+              fill="#666666", anchor="mt",
+              font=carregar_fonte("Inter-Regular.ttf", 18))
+
+    img.save(caminho, "JPEG", quality=92)
+    print(f"   Post gerado: {caminho.name}")
+    return str(caminho)
