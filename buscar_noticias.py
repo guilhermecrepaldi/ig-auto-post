@@ -79,7 +79,9 @@ def buscar_por_categoria(categoria, config):
     try:
         import xml.etree.ElementTree as ET
         for q in queries:
-            url = f"https://news.google.com/rss/search?q={q}&hl=pt-BR&gl=BR"
+            # Garantir que a query seja ASCII-safe
+            q_ascii = q.encode("ascii", errors="replace").decode("ascii")
+            url = f"https://news.google.com/rss/search?q={q_ascii}&hl=pt-BR&gl=BR"
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
             with urllib.request.urlopen(req, timeout=10) as resp:
                 data = resp.read().decode("utf-8", errors="replace")

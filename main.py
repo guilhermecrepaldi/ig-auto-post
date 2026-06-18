@@ -1,16 +1,20 @@
 """
 IG Auto Post — Orquestrador Principal
-Modos:
-  - auto: post simples
-  - ainnews: posta UMA categoria (arquitetura, hardware, tendencias)
-  Recebe CATEGORIA via argumento ou config
+Fluxo unico: busca noticias 1x → gera 3 carrosseis → publica tudo
 """
 import json
 import sys
+import time
 from pathlib import Path
 
 PASTA = Path(__file__).parent
 CATEGORIAS = ["arquitetura", "hardware", "tendencias"]
+
+INFO_CAT = {
+    "arquitetura": {"nome": "Arquitetura", "emoji": "🏗️", "cor": "#00d4ff"},
+    "hardware": {"nome": "Hardware", "emoji": "⚙️", "cor": "#22c55e"},
+    "tendencias": {"nome": "Tendencias", "emoji": "📈", "cor": "#f59e0b"},
+}
 
 
 def carregar_config():
@@ -22,84 +26,69 @@ def carregar_config():
         return json.load(f)
 
 
-def postar_categoria(categoria, config):
-    """Gera e publica carrossel de 8 slides para UMA categoria."""
+def main():
+    config = carregar_config()
+    print("=" * 50)
+    print("IG AUTO POST — AI NEWS DIARIO")
+    print("=" * 50)
+
     from buscar_noticias import buscar_por_categoria
     from gerar_imagem import gerar_carrossel_noticias
     from postar import postar_carrossel
 
-    print(f"[AI NEWS] Postando categoria: {categoria.upper()}")
+    # Cache das noticias (busca 1x)
+    cache_noticias = {}
 
-    noticias = buscar_por_categoria(categoria, config)
-    total_slides = len(noticias)
-    print(f"   {total_slides} slides gerados")
+    print(f"\nBuscando noticias para {len(CATEGORIAS)} categorias...")
+    for cat in CATEGORIAS:
+        print(f"\n--- {cat.upper()} ---")
+        cache_noticias[cat] = buscar_por_categoria(cat, config)
+        time.sleep(2)  # pausa entre buscas pra nao sobrecarregar
 
-    if total_slides < 3:
-        print("Poucos slides, abortando.")
-        return False
+    print("\n" + "=" * 50)
+    print("GERANDO E PUBLICANDO 3 CARROSSEIS")
+    print("=" * 50)
 
-    print("Gerando imagens do carrossel...")
-    caminhos = gerar_carrossel_noticias(noticias, config)
+    for cat in CATEGORIAS:
+        noticias = cache_noticias[cat]
+        info = INFO_CAT[cat]
 
-    if len(caminhos) < 3:
-        print("Falha ao gerar imagens.")
-        return False
+        print(f"\n>>> {info['emoji']} {info['nome']}")
 
-    # Montar legenda
-    nome_cat = {"arquitetura": "Arquitetura", "hardware": "Hardware", "tendencias": "Tendencias"}.get(categoria, categoria)
-    legenda = f"🏗️ AI NEWS - {nome_cat}\n"
-    legenda += f"📅 {noticias[0].get('data_str', '')}\n\n"
-    for n in noticias:
-        if n.get("tipo") == "noticia":
-            legenda += f"{n['emoji']} {n['titulo'][:80]}\n"
-    legenda += "\n\n#IA #AI #Noticias #Tecnologia #MachineLearning #DeepLearning"
+        if len(noticias) < 3:
+            print(f"   Poucos slides ({len(noticias)}), pulando.")
+            continue
 
-    print("Publicando no Instagram...")
-    resultado = postar_carrossel(caminhos, legenda, config)
-    if resultado:
-        print(f"AI NEWS [{categoria}] publicado com sucesso!")
-    else:
-        print(f"Falha ao publicar [{categoria}].")
+        print(f"   Gerando {len(noticias)} slides...")
+        caminhos = gerar_carrossel_noticias(noticias, config)
 
-    return resultado
+        if len(caminhos) < 3:
+            print("   Falha ao gerar imagens.")
+            continue
 
+        # Montar legenda
+        legenda = f"{info['emoji']} AI NEWS - {info['nome']}\n"
+        legenda += f"📅 {noticias[0].get('data_str', '')}\n\n"
+        for n in noticias:
+            if n.get("tipo") == "noticia":
+                legenda += f"{n['emoji']} {n['titulo'][:80]}\n"
+        legenda += "\n\n#IA #AI #Noticias #Tecnologia #MachineLearning #DeepLearning"
 
-def main():
-    config = carregar_config()
-    modo = config.get("post", {}).get("modo", "auto")
-
-    # Verificar se veio categoria como argumento
-    if len(sys.argv) > 1:
-        categoria = sys.argv[1].lower()
-        if categoria in CATEGORIAS:
-            print(f"IG Auto Post — Modo: ainnews [{categoria}]")
-            return postar_categoria(categoria, config)
-        else:
-            print(f"Categoria invalida: {categoria}. Opcoes: {', '.join(CATEGORIAS)}")
-            sys.exit(1)
-
-    # Modo padrao
-    if modo == "ainnews":
-        # Posta todas as 3 categorias em sequencia
-        print("IG Auto Post — Modo: ainnews (3 posts)")
-        for cat in CATEGORIAS:
-            postar_categoria(cat, config)
-            import time
-            time.sleep(30)  # espera entre posts
-    else:
-        # Modo auto: post simples
-        from gerar_legenda import gerar_legenda
-        from gerar_imagem import gerar_imagem_post
-        from postar import postar_instagram
-
-        print("[MODO AUTO] Post simples")
-        legenda = gerar_legenda(config)
-        caminho_imagem = gerar_imagem_post(legenda, config)
-        resultado = postar_instagram(caminho_imagem, legenda, config)
+        print(f"   Publicando...")
+        resultado = postar_carrossel(caminhos, legenda, config)
         if resultado:
-            print("Post publicado com sucesso!")
+            print(f"   ✅ {info['nome']} publicado!")
         else:
-            print("Falha ao publicar.")
+            print(f"   ❌ Falha ao publicar {info['nome']}.")
+
+        # Espera entre posts (evita rate limit)
+        if cat != CATEGORIAS[-1]:
+            print("   Aguardando 30s...")
+            time.sleep(30)
+
+    print("\n" + "=" * 50)
+    print("✅ RODADA DO DIA CONCLUIDA")
+    print("=" * 50)
 
 
 if __name__ == "__main__":
