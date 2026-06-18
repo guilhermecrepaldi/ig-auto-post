@@ -74,11 +74,10 @@ def hex_to_rgb(h):
 # FUNDOS CONTEXTUAIS (patterns geométricos)
 # ====================================================================
 
-def desenhar_fundo_contextual(draw, W, H, paleta, padrao):
-    """Desenha padrao geometrico de fundo baseado na categoria."""
+def desenhar_fundo_contextual(draw, W, H, paleta, padrao, alpha=30):
+    """Desenha padrao geometrico de fundo nitido e visivel."""
     accent = hex_to_rgb(paleta["accent"])
     secundaria = hex_to_rgb(paleta["secundaria"])
-    alpha = 12  # bem sutil
 
     if padrao == "circuitos":
         # Linhas retas horizontais/verticais
@@ -189,42 +188,10 @@ def gerar_carrossel_noticias(noticias, config):
         img = Image.new("RGB", (W, H), bg_top)
         draw = ImageDraw.Draw(img)
 
-        # Fundo contextual: imagem real por categoria
-        bg_image_path = PASTA / "assets" / f"{categoria}_bg.jpg"
-        usa_imagem_fundo = False
-        if bg_image_path.exists():
-            try:
-                bg_img = Image.open(str(bg_image_path)).convert("RGB").resize((W, H), Image.LANCZOS)
-                # Misturar com gradiente escuro (30% imagem + 70% gradiente)
-                grad = Image.new("RGB", (W, H), bg_top)
-                for y in range(H):
-                    ratio = y / H
-                    r = int(bg_top[0] + (bg_bot[0] - bg_top[0]) * ratio)
-                    g = int(bg_top[1] + (bg_bot[1] - bg_top[1]) * ratio)
-                    b = int(bg_top[2] + (bg_bot[2] - bg_top[2]) * ratio)
-                    grad.putpixel((0, y), (r, g, b))
-                    for x in range(1, W):
-                        grad.putpixel((x, y), (r, g, b))
-                img = Image.blend(bg_img, grad, 0.5)
-                draw = ImageDraw.Draw(img)
-                usa_imagem_fundo = True
-            except Exception as e:
-                print(f"   Aviso: fundo {bg_image_path} falhou: {e}")
+        # Fundo contextual: padrao geometrico nitido por categoria
+        desenhar_fundo_contextual(draw, W, H, paleta, padrao, alpha=30)
 
-        if not usa_imagem_fundo:
-            # Gradiente puro
-            for y in range(H):
-                ratio = y / H
-                r = int(bg_top[0] + (bg_bot[0] - bg_top[0]) * ratio)
-                g = int(bg_top[1] + (bg_bot[1] - bg_top[1]) * ratio)
-                b = int(bg_top[2] + (bg_bot[2] - bg_top[2]) * ratio)
-                draw.line([(0, y), (W, y)], fill=(r, g, b))
 
-        # Fundo contextual geometrico (so se nao tiver imagem real)
-        if not usa_imagem_fundo:
-            desenhar_fundo_contextual(draw, W, H, paleta, padrao)
-
-        # Bolinhas de progresso
         for j in range(total_slides):
             cx = W // 2 - (total_slides * 20) + j * 40
             cy = 40
