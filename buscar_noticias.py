@@ -71,6 +71,12 @@ def buscar_por_categoria(categoria, config):
                 if bullets:
                     print(f"       Bullets extraidos: {len(bullets)}")
 
+                # Extrair bullets do impact (frases curtas)
+                import re
+                imp_frases = re.split(r'(?<=[.!?])\s+', impact)
+                imp_frases = [f.strip() for f in imp_frases if f.strip() and len(f.strip()) > 30 and not f.startswith("http")]
+                imp_bullets = [f[:130] for f in imp_frases[:3]]
+
                 noticias.append({
                     "titulo": c.get("title", ""),
                     "resumo": resumo[:250],
@@ -82,6 +88,7 @@ def buscar_por_categoria(categoria, config):
                     "data_str": c.get("date", datetime.now().strftime("%d/%m/%Y")),
                     "importancia": c.get("importance", "medio"),
                     "bullets": bullets,
+                    "imp_bullets": imp_bullets,
                 })
 
         print(f"   Banco: {len(noticias)} noticias para {categoria}")
@@ -133,6 +140,7 @@ def buscar_por_categoria(categoria, config):
             "data_str": n.get("data_str", ""),
             "emoji": emojis[i % len(emojis)],
             "bullets": n.get("bullets", []),
+            "imp_bullets": n.get("imp_bullets", []),
         })
 
     # DEVIPACT
@@ -381,6 +389,7 @@ def buscar_todas_categorias(config):
                 "data_str": n.get("data_str", ""),
                 "emoji": emoji_seq[count % len(emoji_seq)],
                 "bullets": n.get("bullets", []),
+                "imp_bullets": n.get("imp_bullets", []),
             })
             slide_num += 1
             count += 1

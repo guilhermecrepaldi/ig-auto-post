@@ -318,27 +318,39 @@ def _desenhar_noticia(draw, W, H, slide, paleta):
                 yf += 24
         yt = yf
 
-    # IMPACTO - caixa destacada
+    # IMPACTO - bullets curtos
+    imp_bullets = slide.get("imp_bullets", [])
     impact = slide.get("impact", "")
-    if impact:
-        # Extrair frase principal do impacto
-        imp_short = impact[:250]
-        # Pegar primeira frase que nao repete o fact
+
+    if imp_bullets:
         font_imp_label = carregar_fonte("Inter-Bold.ttf", 13)
         font_imp = carregar_fonte("Inter-Regular.ttf", 17)
-
         yi = yt + 15
         if yi < 720:
-            # Label IMPACTO
-            draw.text((W // 2, yi), "IMPACTO PRATICO", fill=accent, anchor="mt", font=font_imp_label)
-            yi += 22
-
+            draw.text((W // 2, yi), "IMPACTO", fill=accent, anchor="mt", font=font_imp_label)
+            yi += 20
+            for ib in imp_bullets[:2]:
+                ibtext = f"▸ {ib}"
+                ib_lines = textwrap.wrap(ibtext, width=48)
+                for line in ib_lines[:2]:
+                    if yi > 760:
+                        break
+                    draw.text((W // 2, yi), line, fill="#cccccc", anchor="mt", font=font_imp)
+                    yi += 22
+    elif impact:
+        imp_short = impact[:250]
+        font_imp_label = carregar_fonte("Inter-Bold.ttf", 13)
+        font_imp = carregar_fonte("Inter-Regular.ttf", 17)
+        yi = yt + 15
+        if yi < 720:
+            draw.text((W // 2, yi), "IMPACTO", fill=accent, anchor="mt", font=font_imp_label)
+            yi += 20
             imp_lines = textwrap.wrap(imp_short, width=48)
             for line in imp_lines[:2]:
                 if yi > 760:
                     break
                 draw.text((W // 2, yi), line, fill="#cccccc", anchor="mt", font=font_imp)
-                yi += 24
+                yi += 22
 
     # Fonte
     fonte = slide.get("fonte", "")
