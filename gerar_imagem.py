@@ -292,25 +292,34 @@ def _desenhar_noticia(draw, W, H, slide, paleta):
     draw.text((W // 2, 230), emoji, fill=accent, anchor="mt", font=font_emoji)
 
     # Titulo
-    font_tit = carregar_fonte("Inter-SemiBold.ttf", 32)
-    tit_linhas = textwrap.wrap(slide["titulo"], width=30)
+    font_tit = carregar_fonte("Inter-SemiBold.ttf", 30)
+    tit_linhas = textwrap.wrap(slide["titulo"], width=28)
     yt = 300
-    for linha in tit_linhas[:4]:
+    for linha in tit_linhas[:3]:
         draw.text((W // 2, yt), linha, fill="white", anchor="mt", font=font_tit)
-        yt += 42
+        yt += 40
 
-    # Resumo (se disponivel e diferente do titulo)
-    resumo = slide.get("resumo", "")
-    if resumo:
-        tit_curto = re.sub(r'[^a-zA-Z0-9]', '', slide["titulo"][:40].lower())
-        res_curto = re.sub(r'[^a-zA-Z0-9]', '', resumo[:40].lower())
-        if tit_curto != res_curto[:len(tit_curto)]:
-            font_res = carregar_fonte("Inter-Regular.ttf", 22)
-            res_linhas = textwrap.wrap(resumo, width=42)
-            yr = yt + 20
-            for linha in res_linhas[:3]:
-                draw.text((W // 2, yr), linha, fill="#bbbbbb", anchor="mt", font=font_res)
-                yr += 32
+    # Fact (explicacao detalhada) - o mais importante!
+    fact = slide.get("fact", "") or slide.get("resumo", "")
+    if fact:
+        font_fact = carregar_fonte("Inter-Regular.ttf", 20)
+        # Prioriza fact sobre resumo
+        fact_texto = fact if len(fact) > 50 else slide.get("resumo", "")
+        fact_linhas = textwrap.wrap(fact_texto, width=44)
+        yf = yt + 10
+        for linha in fact_linhas[:4]:
+            draw.text((W // 2, yf), linha, fill="#cccccc", anchor="mt", font=font_fact)
+            yf += 28
+
+    # Impact (pra que serve)
+    impact = slide.get("impact", "")
+    if impact and len(impact) > 30:
+        font_impact = carregar_fonte("Inter-Regular.ttf", 18)
+        imp_linhas = textwrap.wrap(impact[:200], width=46)
+        yi = yf + 15 if fact else yt + 10
+        for linha in imp_linhas[:2]:
+            draw.text((W // 2, yi), linha, fill="#999999", anchor="mt", font=font_impact)
+            yi += 26
 
     # Fonte
     fonte = slide.get("fonte", "")
