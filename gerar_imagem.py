@@ -214,6 +214,8 @@ def gerar_carrossel_noticias(noticias, config):
             _desenhar_capa(draw, W, H, slide_data, paleta)
         elif tipo == "devimpact":
             _desenhar_devimpact(draw, W, H, slide_data, paleta)
+        elif tipo == "separador":
+            _desenhar_separador(draw, W, H, slide_data, paleta)
         else:
             _desenhar_noticia(draw, W, H, slide_data, paleta)
 
@@ -352,6 +354,25 @@ def _desenhar_devimpact(draw, W, H, slide, paleta):
     font_hash = carregar_fonte("Inter-Regular.ttf", 22)
     draw.rectangle([(0, H - 90), (W, H)], fill=(0, 0, 0, 40))
     draw.text((W // 2, H - 55), "#Dev #Programacao #Carreira #Tecnologia",
+              fill=paleta["hashtag"], anchor="mt", font=font_hash)
+
+
+def _desenhar_separador(draw, W, H, slide, paleta):
+    """Slide separador de categoria."""
+    accent = hex_to_rgb(paleta["accent"])
+    font_emoji = carregar_fonte("Inter-Regular.ttf", 72)
+    font_tit = carregar_fonte("Inter-Bold.ttf", 48)
+    font_sub = carregar_fonte("Inter-Regular.ttf", 24)
+    draw.text((W // 2, H // 2 - 80), slide.get("emoji", "🏗️"),
+              fill="white", anchor="mm", font=font_emoji)
+    draw.text((W // 2, H // 2), slide.get("titulo", ""),
+              fill="white", anchor="mm", font=font_tit)
+    draw.rectangle([(W//2 - 100, H//2 + 40), (W//2 + 100, H//2 + 44)], fill=accent)
+    draw.text((W // 2, H // 2 + 80), slide.get("subtitulo", ""),
+              fill="#888888", anchor="mm", font=font_sub)
+    font_hash = carregar_fonte("Inter-Regular.ttf", 22)
+    draw.rectangle([(0, H - 90), (W, H)], fill=(0, 0, 0, 40))
+    draw.text((W // 2, H - 55), "#IA #AI #Noticias #Tecnologia",
               fill=paleta["hashtag"], anchor="mt", font=font_hash)
 
 

@@ -1,20 +1,12 @@
 """
 IG Auto Post — Orquestrador Principal
-Fluxo unico: busca noticias 1x → gera 3 carrosseis → publica tudo
+1 post diario com 20 slides: capa + 18 noticias + devimpact
 """
 import json
 import sys
-import time
 from pathlib import Path
 
 PASTA = Path(__file__).parent
-CATEGORIAS = ["arquitetura", "hardware", "tendencias"]
-
-INFO_CAT = {
-    "arquitetura": {"nome": "Arquitetura", "emoji": "🏗️", "cor": "#00d4ff"},
-    "hardware": {"nome": "Hardware", "emoji": "⚙️", "cor": "#22c55e"},
-    "tendencias": {"nome": "Tendencias", "emoji": "📈", "cor": "#f59e0b"},
-}
 
 
 def carregar_config():
@@ -29,66 +21,40 @@ def carregar_config():
 def main():
     config = carregar_config()
     print("=" * 50)
-    print("IG AUTO POST — AI NEWS DIARIO")
+    print("IG AUTO POST — AI NEWS DIARIO (20 SLIDES)")
     print("=" * 50)
 
-    from buscar_noticias import buscar_por_categoria
+    from buscar_noticias import buscar_todas_categorias
     from gerar_imagem import gerar_carrossel_noticias
     from postar import postar_carrossel
 
-    # Cache das noticias (busca 1x)
-    cache_noticias = {}
+    print("\nBuscando noticias das 3 categorias...")
+    noticias = buscar_todas_categorias(config)
 
-    print(f"\nBuscando noticias para {len(CATEGORIAS)} categorias...")
-    for cat in CATEGORIAS:
-        print(f"\n--- {cat.upper()} ---")
-        cache_noticias[cat] = buscar_por_categoria(cat, config)
-        time.sleep(2)  # pausa entre buscas pra nao sobrecarregar
+    if len(noticias) < 3:
+        print("Poucos slides, abortando.")
+        return
 
-    print("\n" + "=" * 50)
-    print("GERANDO E PUBLICANDO 3 CARROSSEIS")
-    print("=" * 50)
+    print(f"\nGerando {len(noticias)} slides...")
+    caminhos = gerar_carrossel_noticias(noticias, config)
 
-    for cat in CATEGORIAS:
-        noticias = cache_noticias[cat]
-        info = INFO_CAT[cat]
+    if len(caminhos) < 3:
+        print("Falha ao gerar imagens.")
+        return
 
-        print(f"\n>>> {info['emoji']} {info['nome']}")
+    # Legenda
+    legenda = "📡 AI NEWS - Resumo do Dia\n"
+    legenda += f"📅 {noticias[0].get('data_str', '')}\n\n"
+    legenda += "🏗️ Arquitetura | ⚙️ Hardware | 📈 Tendencias\n"
+    legenda += "\nAs 18 principais noticias de IA em 1 post!\n"
+    legenda += "\n\n#IA #AI #Noticias #Tecnologia #MachineLearning #DeepLearning"
 
-        if len(noticias) < 3:
-            print(f"   Poucos slides ({len(noticias)}), pulando.")
-            continue
-
-        print(f"   Gerando {len(noticias)} slides...")
-        caminhos = gerar_carrossel_noticias(noticias, config)
-
-        if len(caminhos) < 3:
-            print("   Falha ao gerar imagens.")
-            continue
-
-        # Montar legenda
-        legenda = f"{info['emoji']} AI NEWS - {info['nome']}\n"
-        legenda += f"📅 {noticias[0].get('data_str', '')}\n\n"
-        for n in noticias:
-            if n.get("tipo") == "noticia":
-                legenda += f"{n['emoji']} {n['titulo'][:80]}\n"
-        legenda += "\n\n#IA #AI #Noticias #Tecnologia #MachineLearning #DeepLearning"
-
-        print(f"   Publicando...")
-        resultado = postar_carrossel(caminhos, legenda, config)
-        if resultado:
-            print(f"   ✅ {info['nome']} publicado!")
-        else:
-            print(f"   ❌ Falha ao publicar {info['nome']}.")
-
-        # Espera entre posts (evita rate limit)
-        if cat != CATEGORIAS[-1]:
-            print("   Aguardando 30s...")
-            time.sleep(30)
-
-    print("\n" + "=" * 50)
-    print("✅ RODADA DO DIA CONCLUIDA")
-    print("=" * 50)
+    print("Publicando carrossel de 20 slides...")
+    resultado = postar_carrossel(caminhos, legenda, config)
+    if resultado:
+        print("AI NEWS DIARIO publicado com sucesso! (20 slides)")
+    else:
+        print("Falha ao publicar.")
 
 
 if __name__ == "__main__":

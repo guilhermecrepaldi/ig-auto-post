@@ -216,6 +216,105 @@ def buscar_por_categoria(categoria, config):
     return resultado
 
 
+def buscar_todas_categorias(config):
+    """Busca noticias das 3 categorias e retorna 1 lista unificada: capa + 18 noticias + devimpact = 20 slides."""
+    import time
+    from datetime import datetime
+
+    CATS = ["arquitetura", "hardware", "tendencias"]
+    INFO = {
+        "arquitetura": {"emoji": "🏗️", "cor": "#00d4ff", "nome": "ARQUITETURA"},
+        "hardware": {"emoji": "⚙️", "cor": "#22c55e", "nome": "HARDWARE"},
+        "tendencias": {"emoji": "📈", "cor": "#f59e0b", "nome": "TENDENCIAS"},
+    }
+
+    print("Buscando noticias para 3 categorias...")
+
+    todas_noticias = {}
+    for cat in CATS:
+        print(f"\n--- {cat.upper()} ---")
+        todas_noticias[cat] = buscar_por_categoria(cat, config)
+        time.sleep(2)
+
+    # Montar 20 slides
+    resultado = []
+    emoji_seq = ["🤖", "⚡", "🧠", "🚀", "💡", "🔬"]
+
+    # CAPA
+    resultado.append({
+        "numero": 0,
+        "tipo": "capa",
+        "categoria": "capa",
+        "titulo": "AI NEWS",
+        "subtitulo": "Arquitetura + Hardware + Tendencias",
+        "data_str": datetime.now().strftime("%d/%m/%Y"),
+        "emoji": "📡",
+    })
+
+    slide_num = 1
+    for ci, cat in enumerate(CATS):
+        info = INFO[cat]
+        noticias = todas_noticias.get(cat, [])
+
+        # Badge separador da categoria
+        resultado.append({
+            "numero": slide_num,
+            "tipo": "separador",
+            "categoria": cat,
+            "titulo": info["nome"],
+            "emoji": info["emoji"],
+            "subtitulo": "6 principais noticias",
+        })
+        slide_num += 1
+
+        # Noticias (max 6, mas ajusta pra caber em 20)
+        # Limite: 1 capa + 3 separadores + 18 noticias + 1 devimpact = 23 (muito)
+        # Real: 1 capa + 3 sep + 17 noticias + 1 dev = 22. Ainda muito.
+        # Precisamos de: 1 + 3 + 15 + 1 = 20, ou 6+5+5=16 noticias
+        max_noticias_per_cat = {0: 6, 1: 5, 2: 4}  # arquitetura=6, hardware=5, tendencias=4 = 15 noticias
+        max_noticias = max_noticias_per_cat.get(ci, 5)
+
+        count = 0
+        for i, n in enumerate(noticias):
+            if n.get("tipo") != "noticia":
+                continue
+            if count >= max_noticias:
+                break
+            resultado.append({
+                "numero": slide_num,
+                "tipo": "noticia",
+                "categoria": cat,
+                "titulo": n["titulo"],
+                "resumo": n.get("resumo", "")[:150],
+                "url": n.get("url", ""),
+                "fonte": n.get("fonte", ""),
+                "data_str": n.get("data_str", datetime.now().strftime("%d/%m/%Y")),
+                "emoji": emoji_seq[count % len(emoji_seq)],
+            })
+            slide_num += 1
+            count += 1
+
+    # DEVIPACT GERAL (ultimo slide, 20)
+    dev_texto = (
+        "🧑‍💻 O QUE MUDA PRO DEV\n\n"
+        "Arquitetura: Modelos mais eficientes, menos custo de API.\n"
+        "Hardware: GPUs mais potentes, inferencia local.\n"
+        "Tendencias: Ferramentas IA, produtividade 10x.\n\n"
+        "Fique de olho em: MoE, NPUs, regulamentacao, agents."
+    )
+    resultado.append({
+        "numero": slide_num,
+        "tipo": "devimpact",
+        "categoria": "devimpact",
+        "titulo": "O que muda pro Dev",
+        "texto": dev_texto,
+        "emoji": "🧑‍💻",
+    })
+
+    print(f"\nTotal: {len(resultado)} slides")
+    return resultado
+
+
 def extrair_fonte(url):
     if not url:
         return ""
