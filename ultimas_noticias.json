@@ -31,7 +31,15 @@
     "fonte": "Anthropic Research",
     "data_str": "15 JUN 2026",
     "emoji": "🤖",
-    "bullets": []
+    "bullets": [
+      "A Anthropic publicou dados internos mostrando que Claude escreve mais de 80% do código mergeado nos repositórios da empr",
+      "O paper 'When AI Builds Itself' documenta o ciclo de auto-melhoria recursiva (recursive self-improvement — sistema que m"
+    ],
+    "imp_bullets": [
+      "80%+ de código gerado por IA em um produto de fronteira é um marco histórico.",
+      "Para engenheiros de software, isso significa que o trabalho está mudando de 'escrever código' para 'orquestrar agentes que escreve",
+      "A habilidade mais valiosa agora é: (1) especificar problemas com clareza, (2) revisar diffs gerados por IA, (3) estruturar reposit"
+    ]
   },
   {
     "numero": 3,
@@ -48,7 +56,14 @@
     "fonte": "Pliny / Pesquisadores de Segurança",
     "data_str": "JUN 2026",
     "emoji": "⚡",
-    "bullets": []
+    "bullets": [
+      "O pesquisador Pliny (conhecido por jailbreaks anteriores) conseguiu quebrar as guardrails do Claude Fable 5 em 72 horas ",
+      "O prompt completo de 120 mil caracteres foi vazado publicamente, expondo a camada de segurança do modelo mais avançado d"
+    ],
+    "imp_bullets": [
+      "O jailbreak do Fable 5 em 72 horas tem implicações profundas: (1) modelos de fronteira ainda não são seguros contra ataques multi-",
+      "O vazamento do prompt de 120K caracteres também serve como dataset de treinamento para detectar futuras tentativas."
+    ]
   },
   {
     "numero": 4,
@@ -65,7 +80,15 @@
     "fonte": "Meta / TechCrunch",
     "data_str": "15 JUN 2026",
     "emoji": "🧠",
-    "bullets": []
+    "bullets": [
+      "O Facebook lançou o AI Mode, um novo modo de busca que usa o modelo Muse Spark da Meta para sintetizar respostas a parti",
+      "Em vez de exibir links, a IA gera respostas em linguagem natural baseadas no conteúdo compartilhado publicamente na rede"
+    ],
+    "imp_bullets": [
+      "O AI Mode transforma o Facebook em um mecanismo de busca social com curadoria de IA.",
+      "Para desenvolvedores, isso tem duas implicações: (1) o SEO tradicional não funciona aqui — o rankeamento é semântico, baseado no c",
+      "Se você tem um negócio que depende de alcance orgânico no Facebook, adapte sua estratégia de conteúdo: posts públicos e informativ"
+    ]
   },
   {
     "numero": 5,
@@ -82,7 +105,15 @@
     "fonte": "Zhipu AI / GitHub",
     "data_str": "JUN 2026",
     "emoji": "🚀",
-    "bullets": []
+    "bullets": [
+      "A Zhipu AI (China) lançou o GLM-5.2, modelo MoE (Mixture of Experts — arquitetura mista de especialistas que ativa apena",
+      "O modelo oferece dois níveis de 'thinking effort' (esforço de raciocínio controlável), similar ao DeepSeek R1."
+    ],
+    "imp_bullets": [
+      "GLM-5.2 entra na corrida dos modelos abertos com 1M de contexto — um patamar que só Claude e Gemini tinham até agora.",
+      "Com 12B parâmetros ativos, ele roda em uma única GPU H100 (80GB) com quantização FP16.",
+      "Para engenheiros que precisam de contexto longo (análise de codebases inteiros, processamento de documentos jurídicos, RAG sobre b"
+    ]
   },
   {
     "numero": 6,
@@ -99,7 +130,15 @@
     "fonte": "Anthropic / CyberScoop",
     "data_str": "03 JUN 2026",
     "emoji": "💡",
-    "bullets": []
+    "bullets": [
+      "A Anthropic expandiu o Project Glasswing, seu programa de cibersegurança com o modelo Claude Mythos Preview, para aproxi",
+      "Participantes incluem operadores de infraestrutura crítica (energia, água, saúde, comunicações), agências governamentais"
+    ],
+    "imp_bullets": [
+      "O Glasswing é o maior programa de vulnerabilidade-hunting com IA já implantado.",
+      "Mythos Preview é uma versão especializada do Claude para descoberta de falhas de segurança em software de infraestrutura crítica.",
+      "Se você trabalha com segurança ofensiva, o Mythos estabelece um novo padrão: onde um time de pentest humano encontra dezenas de vu"
+    ]
   },
   {
     "numero": 7,
@@ -116,7 +155,15 @@
     "fonte": "Anthropic Research",
     "data_str": "JUN 2026",
     "emoji": "🔬",
-    "bullets": []
+    "bullets": [
+      "A Anthropic publicou proposta formal para uma pausa global voluntária de 6 meses no treinamento de modelos de IA que ult",
+      "A proposta sugere um consórcio internacional de verificação, similar ao modelo da AIEA (Agência Internacional de Energia"
+    ],
+    "imp_bullets": [
+      "A proposta reflete a escalada dos riscos — o próprio Fable 5 (que a Anthropic treinou) já está no centro de controvérsias de segur",
+      "Para engenheiros, o impacto imediato é regulatório: se a pausa for adotada, o treinamento de modelos acima do threshold (estimado ",
+      "Mas o desenvolvimento de aplicações, fine-tune e inferência continuam."
+    ]
   },
   {
     "numero": 8,
@@ -141,7 +188,15 @@
     "fonte": "NVIDIA Blog",
     "data_str": "14 JUN 2026",
     "emoji": "🤖",
-    "bullets": []
+    "bullets": [
+      "A Artificial Analysis lançou o AgentPerf, primeiro benchmark de infraestrutura projetado especificamente para cargas agê",
+      "O sistema NVIDIA GB300 NVL72 (Blackwell Ultra) entregou 20× mais agentes por megawatt que a geração anterior Hopper HGX "
+    ],
+    "imp_bullets": [
+      "O AgentPerf muda a métrica de comparação de hardware para agentes: em vez de tokens/segundo, o mercado agora mede 'agentes por meg",
+      "Para quem está dimensionando infraestrutura de agentes autônomos (sistemas que executam múltiplas tarefas sem supervisão, como cod",
+      "Se você está planejando um cluster de agentes, priorize Blackwell GB300 sobre H200 — o mesmo orçamento de energia roda 20× mais ag"
+    ]
   },
   {
     "numero": 10,
@@ -158,7 +213,14 @@
     "fonte": "ASUS / TechPowerUp",
     "data_str": "15 JUN 2026",
     "emoji": "⚡",
-    "bullets": []
+    "bullets": [
+      "A ASUS anunciou o ExpertCenter Pro ET900N G3, primeiro desktop workstation equipado com o GB300 Grace Blackwell Ultra da"
+    ],
+    "imp_bullets": [
+      "Um desktop de 20 PFLOPS muda a equação de custo-benefício para desenvolvimento local de IA.",
+      "Com um GB300 você pode fine-tunar modelos de 70B parâmetros em horas, não dias, e rodar inferência de modelos como o Nemotron 3 Ul",
+      "Para engenheiros que hoje pagam US$ 20-50/hora em GPUs na nuvem, o ROI de um ET900N G3 (~US$ 30-50k estimado) se paga em meses se "
+    ]
   },
   {
     "numero": 11,
@@ -175,7 +237,16 @@
     "fonte": "NVIDIA / GitHub",
     "data_str": "14 JUN 2026",
     "emoji": "🧠",
-    "bullets": []
+    "bullets": [
+      "A NVIDIA abriu o código do SkillSpector, scanner de segurança para skills de agentes de IA.",
+      "A ferramenta detecta 64 padrões de vulnerabilidade em 16 categorias, incluindo injeção de prompt, vazamento de dados e c",
+      "Pesquisa prévia indicou que 26,1% das skills de agentes contêm vulnerabilidades e 5,2% têm intenção maliciosa provável."
+    ],
+    "imp_bullets": [
+      "Skills de agentes (usadas por Claude Code, Codex CLI, Gemini CLI, Hermes) executam com confiança implícita e pouca verificação.",
+      "O SkillSpector preenche esse gap: adicione `npx skillspector scan <skill-dir>` ao seu pipeline de CI/CD de agentes.",
+      "A integração com GitHub Actions permite bloquear PRs que adicionem skills com vulnerabilidades conhecidas."
+    ]
   },
   {
     "numero": 12,
@@ -192,7 +263,15 @@
     "fonte": "Apple / NVIDIA",
     "data_str": "JUN 2026",
     "emoji": "🚀",
-    "bullets": []
+    "bullets": [
+      "A Apple expandiu seu Apple Private Cloud Compute (PCC) para o Google Cloud, utilizando GPUs NVIDIA com Confidential Comp",
+      "A medida estende a infraestrutura de IA da Apple sem comprometer o modelo de privabilidade — os dados do usuário permane"
+    ],
+    "imp_bullets": [
+      "Apple usando Google Cloud é um movimento inédito que quebra a barreira entre os dois ecossistemas.",
+      "Para engenheiros iOS, isso significa que funcionalidades como Siri AI e Apple Intelligence podem processar consultas mais complexa",
+      "Na prática, se você desenvolve apps com ML on-device que hoje limitam capacidade por causa do chip do iPhone, comece a planejar um"
+    ]
   },
   {
     "numero": 13,
@@ -209,7 +288,15 @@
     "fonte": "UK Government / NVIDIA",
     "data_str": "JUN 2026",
     "emoji": "💡",
-    "bullets": []
+    "bullets": [
+      "O Reino Unido anunciou planos concretos para datacenters de IA alimentados por energia nuclear, com capacidade de 1,7 GW",
+      "O projeto UK Sovereign AI visa construir infraestrutura soberana de computação de IA usando Small Modular Reactors (SMRs"
+    ],
+    "imp_bullets": [
+      "Datacenters nucleares são a resposta ao gargalo energético da IA.",
+      "Para empresas que planejam clusters na Europa, o Reino Unido se torna o destino mais estável.",
+      "O custo nivelado de energia (LCOE) de SMRs (~US$ 60-100/MWh) compete já com redes elétricas convencionais em regiões com restriçõe"
+    ]
   },
   {
     "numero": 14,
@@ -232,7 +319,8 @@
     "fonte": "Google",
     "data_str": "29/05/2026",
     "emoji": "🤖",
-    "bullets": []
+    "bullets": [],
+    "imp_bullets": []
   },
   {
     "numero": 16,
@@ -247,7 +335,8 @@
     "fonte": "Google",
     "data_str": "01/06/2026",
     "emoji": "⚡",
-    "bullets": []
+    "bullets": [],
+    "imp_bullets": []
   },
   {
     "numero": 17,
@@ -262,7 +351,8 @@
     "fonte": "Google",
     "data_str": "06/03/2026",
     "emoji": "🧠",
-    "bullets": []
+    "bullets": [],
+    "imp_bullets": []
   },
   {
     "numero": 18,
@@ -277,7 +367,8 @@
     "fonte": "Google",
     "data_str": "02/04/2026",
     "emoji": "🚀",
-    "bullets": []
+    "bullets": [],
+    "imp_bullets": []
   },
   {
     "numero": 19,

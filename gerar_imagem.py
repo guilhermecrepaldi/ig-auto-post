@@ -189,16 +189,40 @@ def gerar_carrossel_noticias(noticias, config):
         img = Image.new("RGB", (W, H), bg_top)
         draw = ImageDraw.Draw(img)
 
-        # Gradiente
-        for y in range(H):
-            ratio = y / H
-            r = int(bg_top[0] + (bg_bot[0] - bg_top[0]) * ratio)
-            g = int(bg_top[1] + (bg_bot[1] - bg_top[1]) * ratio)
-            b = int(bg_top[2] + (bg_bot[2] - bg_top[2]) * ratio)
-            draw.line([(0, y), (W, y)], fill=(r, g, b))
+        # Fundo contextual: imagem real por categoria
+        bg_image_path = PASTA / "assets" / f"{categoria}_bg.jpg"
+        usa_imagem_fundo = False
+        if bg_image_path.exists():
+            try:
+                bg_img = Image.open(str(bg_image_path)).convert("RGB").resize((W, H), Image.LANCZOS)
+                # Misturar com gradiente escuro (30% imagem + 70% gradiente)
+                grad = Image.new("RGB", (W, H), bg_top)
+                for y in range(H):
+                    ratio = y / H
+                    r = int(bg_top[0] + (bg_bot[0] - bg_top[0]) * ratio)
+                    g = int(bg_top[1] + (bg_bot[1] - bg_top[1]) * ratio)
+                    b = int(bg_top[2] + (bg_bot[2] - bg_top[2]) * ratio)
+                    grad.putpixel((0, y), (r, g, b))
+                    for x in range(1, W):
+                        grad.putpixel((x, y), (r, g, b))
+                img = Image.blend(bg_img, grad, 0.5)
+                draw = ImageDraw.Draw(img)
+                usa_imagem_fundo = True
+            except Exception as e:
+                print(f"   Aviso: fundo {bg_image_path} falhou: {e}")
 
-        # Fundo contextual
-        desenhar_fundo_contextual(draw, W, H, paleta, padrao)
+        if not usa_imagem_fundo:
+            # Gradiente puro
+            for y in range(H):
+                ratio = y / H
+                r = int(bg_top[0] + (bg_bot[0] - bg_top[0]) * ratio)
+                g = int(bg_top[1] + (bg_bot[1] - bg_top[1]) * ratio)
+                b = int(bg_top[2] + (bg_bot[2] - bg_top[2]) * ratio)
+                draw.line([(0, y), (W, y)], fill=(r, g, b))
+
+        # Fundo contextual geometrico (so se nao tiver imagem real)
+        if not usa_imagem_fundo:
+            desenhar_fundo_contextual(draw, W, H, paleta, padrao)
 
         # Bolinhas de progresso
         for j in range(total_slides):
