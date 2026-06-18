@@ -67,7 +67,7 @@ def buscar_por_categoria(categoria, config):
                 import re
                 frases = re.split(r'(?<=[.!?])\s+', fact)
                 frases = [f.strip() for f in frases if f.strip() and len(f.strip()) > 30 and not f.startswith("http")]
-                bullets = [f[:120] for f in frases[:5]]
+                bullets = [_cortar_palavra(f, 37) for f in frases[:5]]
                 if bullets:
                     print(f"       Bullets extraidos: {len(bullets)}")
 
@@ -75,7 +75,7 @@ def buscar_por_categoria(categoria, config):
                 import re
                 imp_frases = re.split(r'(?<=[.!?])\s+', impact)
                 imp_frases = [f.strip() for f in imp_frases if f.strip() and len(f.strip()) > 30 and not f.startswith("http")]
-                imp_bullets = [f[:130] for f in imp_frases[:3]]
+                imp_bullets = [f[:50] for f in imp_frases[:3]]
 
                 noticias.append({
                     "titulo": c.get("title", ""),
@@ -271,6 +271,18 @@ def _extrair_fonte(url):
             return partes[-2].capitalize()
         return partes[0].capitalize()
     return ""
+
+
+def _cortar_palavra(texto, max_chars):
+    """Corta texto no limite de caracteres sem quebrar palavras."""
+    if len(texto) <= max_chars:
+        return texto
+    # Corta no espaco antes de max_chars
+    corte = texto[:max_chars]
+    ultimo_espaco = corte.rfind(' ')
+    if ultimo_espaco > max_chars * 0.6:  # so corta se tiver espaco razoavel
+        return corte[:ultimo_espaco]
+    return corte
 
 
 def _limpar_titulo(titulo):
