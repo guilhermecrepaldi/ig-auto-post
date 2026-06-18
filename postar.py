@@ -46,11 +46,11 @@ def postar_instagram(caminho_imagem, legenda, config):
 
 
 def postar_carrossel(caminhos_imagens, legenda, config):
-    """Publica carrossel (album) de 4 imagens no Instagram."""
+    """Publica carrossel (album) de ate 20 imagens no Instagram."""
     try:
         cl = _login_instagram(config)
-        # instagrapi: album_upload recebe lista de (caminho, legenda_opcional)
-        medias = [(str(path), None) for path in caminhos_imagens]
+        from pathlib import Path
+        medias = [Path(str(p)) for p in caminhos_imagens]
         result = cl.album_upload(medias, caption=legenda)
         print(f"   Carrossel Post ID: {result.id}")
         return True
