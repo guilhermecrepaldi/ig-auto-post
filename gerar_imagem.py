@@ -264,67 +264,86 @@ def _desenhar_capa(draw, W, H, slide, paleta):
 
 
 def _desenhar_noticia(draw, W, H, slide, paleta):
-    """Slide de noticia com categoria, titulo, resumo, data, fonte."""
+    """Slide de noticia com info completa: titulo + bullet-fact + impacto."""
     accent = hex_to_rgb(paleta["accent"])
     secundaria = hex_to_rgb(paleta["secundaria"])
 
-    # Badge de categoria
-    font_cat = carregar_fonte("Inter-Bold.ttf", 16)
+    # Badge + data na mesma linha (economiza espaco)
+    font_badge = carregar_fonte("Inter-Bold.ttf", 14)
     cat_info = slide.get("categoria", "tendencias").upper()
-    draw.text((W // 2, 120), f"  {cat_info}  ",
-              fill="white", anchor="mt", font=font_cat)
-    # Fundo do badge
-    bx1 = W//2 - 90
-    bx2 = W//2 + 90
-    draw.rectangle([(bx1, 105), (bx2, 140)], fill=secundaria + (60,))
-    draw.text((W // 2, 122), f"  {cat_info}  ",
-              fill=accent, anchor="mt", font=font_cat)
+    draw.rectangle([(W//2 - 100, 90), (W//2 + 100, 118)], fill=secundaria + (60,))
+    draw.text((W // 2, 104), f"  {cat_info}  ", fill=accent, anchor="mt", font=font_badge)
 
-    # Data da noticia
-    font_data = carregar_fonte("Inter-Regular.ttf", 18)
     data = slide.get("data_str", "")
-    draw.text((W // 2, 170), f"📅 {data}",
-              fill="#888888", anchor="mt", font=font_data)
+    font_data = carregar_fonte("Inter-Regular.ttf", 15)
+    draw.text((W // 2, 140), f"📅 {data}", fill="#777777", anchor="mt", font=font_data)
 
-    # Emoji grande
-    font_emoji = carregar_fonte("Inter-Regular.ttf", 50)
-    emoji = slide.get("emoji", "📰")
-    draw.text((W // 2, 230), emoji, fill=accent, anchor="mt", font=font_emoji)
-
-    # Titulo
-    font_tit = carregar_fonte("Inter-SemiBold.ttf", 30)
-    tit_linhas = textwrap.wrap(slide["titulo"], width=28)
-    yt = 300
+    # TITULO - maior possivel
+    font_tit = carregar_fonte("Inter-SemiBold.ttf", 28)
+    tit_linhas = textwrap.wrap(slide["titulo"], width=30)
+    yt = 185
     for linha in tit_linhas[:3]:
         draw.text((W // 2, yt), linha, fill="white", anchor="mt", font=font_tit)
-        yt += 40
+        yt += 36
 
-    # Fact (explicacao detalhada) - o mais importante!
+    # FACT como bullets curtos
     fact = slide.get("fact", "") or slide.get("resumo", "")
-    if fact:
-        font_fact = carregar_fonte("Inter-Regular.ttf", 20)
-        # Prioriza fact sobre resumo
-        fact_texto = fact if len(fact) > 50 else slide.get("resumo", "")
-        fact_linhas = textwrap.wrap(fact_texto, width=44)
-        yf = yt + 10
-        for linha in fact_linhas[:4]:
-            draw.text((W // 2, yf), linha, fill="#cccccc", anchor="mt", font=font_fact)
-            yf += 28
+    bullets = slide.get("bullets", [])
 
-    # Impact (pra que serve)
+    if bullets:
+        font_fact = carregar_fonte("Inter-Regular.ttf", 18)
+        yf = yt + 12
+        for bullet in bullets[:3]:
+            btext = f"▸ {bullet}"
+            lines = textwrap.wrap(btext, width=50)
+            for line in lines[:2]:
+                if yf > 720:
+                    break
+                draw.text((W // 2, yf), line, fill="#bbbbbb", anchor="mt", font=font_fact)
+                yf += 24
+        yt = yf
+    elif fact:
+        frases = [f.strip() for f in fact.replace(". ", ".@@").replace("! ", "!@@").replace("? ", "?@@").split("@@") if f.strip()]
+        font_fact = carregar_fonte("Inter-Regular.ttf", 18)
+        yf = yt + 12
+        for frase in frases[:3]:
+            if len(frase) > 100:
+                frase = frase[:97] + "..."
+            bullet = f"▸ {frase}"
+            lines = textwrap.wrap(bullet, width=50)
+            for line in lines[:2]:
+                if yf > 720:
+                    break
+                draw.text((W // 2, yf), line, fill="#bbbbbb", anchor="mt", font=font_fact)
+                yf += 24
+        yt = yf
+
+    # IMPACTO - caixa destacada
     impact = slide.get("impact", "")
-    if impact and len(impact) > 30:
-        font_impact = carregar_fonte("Inter-Regular.ttf", 18)
-        imp_linhas = textwrap.wrap(impact[:200], width=46)
-        yi = yf + 15 if fact else yt + 10
-        for linha in imp_linhas[:2]:
-            draw.text((W // 2, yi), linha, fill="#999999", anchor="mt", font=font_impact)
-            yi += 26
+    if impact:
+        # Extrair frase principal do impacto
+        imp_short = impact[:250]
+        # Pegar primeira frase que nao repete o fact
+        font_imp_label = carregar_fonte("Inter-Bold.ttf", 13)
+        font_imp = carregar_fonte("Inter-Regular.ttf", 17)
+
+        yi = yt + 15
+        if yi < 720:
+            # Label IMPACTO
+            draw.text((W // 2, yi), "IMPACTO PRATICO", fill=accent, anchor="mt", font=font_imp_label)
+            yi += 22
+
+            imp_lines = textwrap.wrap(imp_short, width=48)
+            for line in imp_lines[:2]:
+                if yi > 760:
+                    break
+                draw.text((W // 2, yi), line, fill="#cccccc", anchor="mt", font=font_imp)
+                yi += 24
 
     # Fonte
     fonte = slide.get("fonte", "")
     if fonte:
-        font_fonte = carregar_fonte("Inter-Regular.ttf", 16)
+        font_fonte = carregar_fonte("Inter-Regular.ttf", 14)
         draw.text((W // 2, H - 140), f"Fonte: {fonte}",
                   fill="#555555", anchor="mt", font=font_fonte)
 
@@ -332,7 +351,7 @@ def _desenhar_noticia(draw, W, H, slide, paleta):
     draw.rectangle([(W//2 - 100, H - 115), (W//2 + 100, H - 111)], fill=accent)
 
     # Hashtags
-    font_hash = carregar_fonte("Inter-Regular.ttf", 22)
+    font_hash = carregar_fonte("Inter-Regular.ttf", 20)
     draw.rectangle([(0, H - 90), (W, H)], fill=(0, 0, 0, 40))
     draw.text((W // 2, H - 55), "#IA #AI #Noticias #Tecnologia",
               fill=paleta["hashtag"], anchor="mt", font=font_hash)

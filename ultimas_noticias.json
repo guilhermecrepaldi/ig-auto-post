@@ -1,0 +1,290 @@
+[
+  {
+    "numero": 0,
+    "tipo": "capa",
+    "categoria": "capa",
+    "titulo": "AI NEWS",
+    "subtitulo": "Arquitetura + Hardware + Tendencias",
+    "data_str": "18/06/2026",
+    "emoji": "📡"
+  },
+  {
+    "numero": 1,
+    "tipo": "separador",
+    "categoria": "arquitetura",
+    "titulo": "ARQUITETURA",
+    "emoji": "🏗️",
+    "subtitulo": "6 principais noticias"
+  },
+  {
+    "numero": 2,
+    "tipo": "noticia",
+    "categoria": "arquitetura",
+    "titulo": "Anthropic revela 'When AI Builds Itself': Claude já escreve 80%+ do código mergeado em seus próprios repositórios",
+    "resumo": "A Anthropic publicou dados internos mostrando que Claude escreve mais de 80% do código mergeado nos repositórios da empresa. O paper 'When AI Builds Itself' documenta o ciclo de auto-melhoria recursiv",
+    "fact": "A Anthropic publicou dados internos mostrando que Claude escreve mais de 80% do código mergeado nos repositórios da empresa. O paper 'When AI Builds Itself' documenta o ciclo de auto-melhoria recursiva (recursive self-improvement — sistema que melhora seu próprio código, criando um loop de aceleração) onde Claude corrige seus próprios bugs, otimiza arquiteturas e gera features novas.",
+    "impact": "80%+ de código gerado por IA em um produto de fronteira é um marco histórico. Para engenheiros de software, isso significa que o trabalho está mudando de 'escrever código' para 'orquestrar agentes que escrevem código'. A habilidade mais valiosa agora é: (1) especificar problemas com clareza, (2) revisar diffs gerados por IA, (3) estruturar repositórios para que agentes naveguem eficientemente. Se seu time ainda não tem um coding agent (Claude Code, GitHub Copilot, Codex CLI), implemente esta semana — o gap de produtividade para quem usa já é de 2-3×.",
+    "terms": {
+      "Recursive self-improvement": "Processo onde um sistema de IA modifica seu próprio código, gerando um ciclo de aprimoramento acelerado sem intervenção humana direta"
+    },
+    "url": "https://www.anthropic.com/news/when-ai-builds-itself",
+    "fonte": "Anthropic Research",
+    "data_str": "15 JUN 2026",
+    "emoji": "🤖",
+    "bullets": []
+  },
+  {
+    "numero": 3,
+    "tipo": "noticia",
+    "categoria": "arquitetura",
+    "titulo": "Anthropic Fable 5 sofre jailbreak em 72 horas: Pack Hunt multi-agente vaza prompt de 120K caracteres",
+    "resumo": "O pesquisador Pliny (conhecido por jailbreaks anteriores) conseguiu quebrar as guardrails do Claude Fable 5 em 72 horas usando uma técnica chamada 'Pack Hunt' — ataque coordenado de múltiplos agentes ",
+    "fact": "O pesquisador Pliny (conhecido por jailbreaks anteriores) conseguiu quebrar as guardrails do Claude Fable 5 em 72 horas usando uma técnica chamada 'Pack Hunt' — ataque coordenado de múltiplos agentes de IA que exploram diferentes ângulos simultaneamente. O prompt completo de 120 mil caracteres foi vazado publicamente, expondo a camada de segurança do modelo mais avançado da Anthropic.",
+    "impact": "O jailbreak do Fable 5 em 72 horas tem implicações profundas: (1) modelos de fronteira ainda não são seguros contra ataques multi-agente coordenados; (2) o 'Pack Hunt' estabelece um novo padrão de ataque que todo red team (time de segurança ofensiva que testa os limites do sistema) precisa simular; (3) para engenheiros que deployam modelos via API, implemente detecção de padrões de jailbreak conhecidos no middleware antes de enviar ao LLM. O vazamento do prompt de 120K caracteres também serve como dataset de treinamento para detectar futuras tentativas.",
+    "terms": {
+      "Jailbreak": "Técnica que explora vulnerabilidades nos alinhamento de segurança de um modelo de IA para fazê-lo ignorar restrições e produzir conteúdo proibido"
+    },
+    "url": "https://www.anthropic.com/news",
+    "fonte": "Pliny / Pesquisadores de Segurança",
+    "data_str": "JUN 2026",
+    "emoji": "⚡",
+    "bullets": []
+  },
+  {
+    "numero": 4,
+    "tipo": "noticia",
+    "categoria": "arquitetura",
+    "titulo": "Meta AI Mode no Facebook: busca social com IA sintetiza posts públicos via Muse Spark",
+    "resumo": "O Facebook lançou o AI Mode, um novo modo de busca que usa o modelo Muse Spark da Meta para sintetizar respostas a partir de posts públicos, grupos, Reels e Marketplace. Em vez de exibir links, a IA g",
+    "fact": "O Facebook lançou o AI Mode, um novo modo de busca que usa o modelo Muse Spark da Meta para sintetizar respostas a partir de posts públicos, grupos, Reels e Marketplace. Em vez de exibir links, a IA gera respostas em linguagem natural baseadas no conteúdo compartilhado publicamente na rede.",
+    "impact": "O AI Mode transforma o Facebook em um mecanismo de busca social com curadoria de IA. Para desenvolvedores, isso tem duas implicações: (1) o SEO tradicional não funciona aqui — o rankeamento é semântico, baseado no conteúdo de posts, não em backlinks; (2) a API Graph do Facebook pode expor novos endpoints para consultar esse índice. Se você tem um negócio que depende de alcance orgânico no Facebook, adapte sua estratégia de conteúdo: posts públicos e informativos em grupos serão o novo 'link building'. A Meta estima que o AI Mode pode gerar US$ 10 bilhões/ano em receita.",
+    "terms": {
+      "Muse Spark": "Modelo proprietário da Meta lançado em abril de 2026, base do Superintelligence Labs, que alimenta produtos de IA generativa na família de apps Meta"
+    },
+    "url": "https://techcrunch.com/2026/06/15/metas-new-ai-mode-on-facebook-pulls-from-public-info-across-its-platforms/",
+    "fonte": "Meta / TechCrunch",
+    "data_str": "15 JUN 2026",
+    "emoji": "🧠",
+    "bullets": []
+  },
+  {
+    "numero": 5,
+    "tipo": "noticia",
+    "categoria": "arquitetura",
+    "titulo": "GLM-5.2: Zhipu AI lança modelo MoE 130B aberto com 1M tokens de contexto e dois níveis de thinking",
+    "resumo": "A Zhipu AI (China) lançou o GLM-5.2, modelo MoE (Mixture of Experts — arquitetura mista de especialistas que ativa apenas subconjuntos de parâmetros por token) de 130B parâmetros totais com 12B ativos",
+    "fact": "A Zhipu AI (China) lançou o GLM-5.2, modelo MoE (Mixture of Experts — arquitetura mista de especialistas que ativa apenas subconjuntos de parâmetros por token) de 130B parâmetros totais com 12B ativos por token, suportando 1 milhão de tokens de contexto. O modelo oferece dois níveis de 'thinking effort' (esforço de raciocínio controlável), similar ao DeepSeek R1.",
+    "impact": "GLM-5.2 entra na corrida dos modelos abertos com 1M de contexto — um patamar que só Claude e Gemini tinham até agora. Com 12B parâmetros ativos, ele roda em uma única GPU H100 (80GB) com quantização FP16. Para engenheiros que precisam de contexto longo (análise de codebases inteiros, processamento de documentos jurídicos, RAG sobre bases grandes), o GLM-5.2 é uma alternativa gratuita viável. Teste com `pip install glm-5.2` e `from glm import GLM52` — a implementação usa FlashAttention-3 (FA3 — terceira geração de atenção eficiente que otimiza o uso de memória cache) para o contexto longo.",
+    "terms": {
+      "MoE": "Mixture of Experts — arquitetura que divide parâmetros em 'especialistas' e ativa apenas os relevantes para cada token, economizando computação"
+    },
+    "url": "https://github.com/THUDM/GLM-5",
+    "fonte": "Zhipu AI / GitHub",
+    "data_str": "JUN 2026",
+    "emoji": "🚀",
+    "bullets": []
+  },
+  {
+    "numero": 6,
+    "tipo": "noticia",
+    "categoria": "arquitetura",
+    "titulo": "Project Glasswing: Anthropic expande Claude Mythos para 150 organizações em 15+ países",
+    "resumo": "A Anthropic expandiu o Project Glasswing, seu programa de cibersegurança com o modelo Claude Mythos Preview, para aproximadamente 150 novas organizações em mais de 15 países. Participantes incluem ope",
+    "fact": "A Anthropic expandiu o Project Glasswing, seu programa de cibersegurança com o modelo Claude Mythos Preview, para aproximadamente 150 novas organizações em mais de 15 países. Participantes incluem operadores de infraestrutura crítica (energia, água, saúde, comunicações), agências governamentais e empresas de tecnologia, com acesso gateado por requisitos de segurança.",
+    "impact": "O Glasswing é o maior programa de vulnerabilidade-hunting com IA já implantado. Mythos Preview é uma versão especializada do Claude para descoberta de falhas de segurança em software de infraestrutura crítica. Se você trabalha com segurança ofensiva, o Mythos estabelece um novo padrão: onde um time de pentest humano encontra dezenas de vulnerabilidades em semanas, o Mythos encontra centenas em horas. A Anthropic libera acesso mediante aplicação em anthropic.com/glasswing — times de segurança de infraestrutura crítica devem se candidatar.",
+    "terms": {
+      "Vulnerability-hunting": "Processo de busca sistemática por falhas de segurança em software, hardware ou sistemas, similar a pentest automatizado"
+    },
+    "url": "https://www.anthropic.com/news",
+    "fonte": "Anthropic / CyberScoop",
+    "data_str": "03 JUN 2026",
+    "emoji": "💡",
+    "bullets": []
+  },
+  {
+    "numero": 7,
+    "tipo": "noticia",
+    "categoria": "arquitetura",
+    "titulo": "Anthropic propõe pausa global de 6 meses em treinamento de modelos acima de threshold de capacidade",
+    "resumo": "A Anthropic publicou proposta formal para uma pausa global voluntária de 6 meses no treinamento de modelos de IA que ultrapassem um threshold definido de capacidade (FLOPs de treinamento, parâmetros e",
+    "fact": "A Anthropic publicou proposta formal para uma pausa global voluntária de 6 meses no treinamento de modelos de IA que ultrapassem um threshold definido de capacidade (FLOPs de treinamento, parâmetros efetivos e capacidade de auto-melhoria). A proposta sugere um consórcio internacional de verificação, similar ao modelo da AIEA (Agência Internacional de Energia Atômica) para energia nuclear.",
+    "impact": "A proposta reflete a escalada dos riscos — o próprio Fable 5 (que a Anthropic treinou) já está no centro de controvérsias de segurança. Para engenheiros, o impacto imediato é regulatório: se a pausa for adotada, o treinamento de modelos acima do threshold (estimado em 10²⁶ FLOPs) ficará suspenso. Mas o desenvolvimento de aplicações, fine-tune e inferência continuam. Na prática, prepare-se para um cenário onde os modelos existentes (GPT-5.5, Claude Fable, Gemini 3.5) serão a fronteira disponível por mais tempo — foque em extrair máximo valor deles com agentes, RAG e fine-tune.",
+    "terms": {
+      "Threshold de capacidade": "Limiar de poder computacional (medido em FLOPs) a partir do qual um modelo de IA é considerado capaz de riscos sistêmicos, como auto-melhoria descontrolada"
+    },
+    "url": "https://www.anthropic.com/news",
+    "fonte": "Anthropic Research",
+    "data_str": "JUN 2026",
+    "emoji": "🔬",
+    "bullets": []
+  },
+  {
+    "numero": 8,
+    "tipo": "separador",
+    "categoria": "hardware",
+    "titulo": "HARDWARE",
+    "emoji": "⚙️",
+    "subtitulo": "5 principais noticias"
+  },
+  {
+    "numero": 9,
+    "tipo": "noticia",
+    "categoria": "hardware",
+    "titulo": "NVIDIA AgentPerf: Blackwell Ultra 20× mais agentes por megawatt que Hopper",
+    "resumo": "A Artificial Analysis lançou o AgentPerf, primeiro benchmark de infraestrutura projetado especificamente para cargas agênticas de IA. O sistema NVIDIA GB300 NVL72 (Blackwell Ultra) entregou 20× mais a",
+    "fact": "A Artificial Analysis lançou o AgentPerf, primeiro benchmark de infraestrutura projetado especificamente para cargas agênticas de IA. O sistema NVIDIA GB300 NVL72 (Blackwell Ultra) entregou 20× mais agentes por megawatt que a geração anterior Hopper HGX H200, rodando DeepSeek V4 Pro em ambos os cenários.",
+    "impact": "O AgentPerf muda a métrica de comparação de hardware para agentes: em vez de tokens/segundo, o mercado agora mede 'agentes por megawatt'. Para quem está dimensionando infraestrutura de agentes autônomos (sistemas que executam múltiplas tarefas sem supervisão, como coding agents ou customer support bots), isso significa que a eficiência energética se torna o gargalo primário. Se você está planejando um cluster de agentes, priorize Blackwell GB300 sobre H200 — o mesmo orçamento de energia roda 20× mais agentes simultâneos.",
+    "terms": {
+      "AgentPerf": "Benchmark de infraestrutura para cargas de trabalho de agentes de IA, medindo agentes processados por watt"
+    },
+    "url": "https://blogs.nvidia.com/blog/nvidia-blackwell-agentperf-artificial-analysis/",
+    "fonte": "NVIDIA Blog",
+    "data_str": "14 JUN 2026",
+    "emoji": "🤖",
+    "bullets": []
+  },
+  {
+    "numero": 10,
+    "tipo": "noticia",
+    "categoria": "hardware",
+    "titulo": "ASUS ExpertCenter Pro ET900N G3: primeiro desktop com GB300 Blackwell Ultra de 20 PFLOPS",
+    "resumo": "A ASUS anunciou o ExpertCenter Pro ET900N G3, primeiro desktop workstation equipado com o GB300 Grace Blackwell Ultra da NVIDIA, capaz de 20 PFLOPS de desempenho em IA — suficiente para treinar e roda",
+    "fact": "A ASUS anunciou o ExpertCenter Pro ET900N G3, primeiro desktop workstation equipado com o GB300 Grace Blackwell Ultra da NVIDIA, capaz de 20 PFLOPS de desempenho em IA — suficiente para treinar e rodar modelos de fronteira localmente sem dependência de nuvem.",
+    "impact": "Um desktop de 20 PFLOPS muda a equação de custo-benefício para desenvolvimento local de IA. Com um GB300 você pode fine-tunar modelos de 70B parâmetros em horas, não dias, e rodar inferência de modelos como o Nemotron 3 Ultra (55B ativos) localmente. Para engenheiros que hoje pagam US$ 20-50/hora em GPUs na nuvem, o ROI de um ET900N G3 (~US$ 30-50k estimado) se paga em meses se houver uso intensivo. A dica: verifique se seu framework (PyTorch, vLLM, TensorRT-LLM) já tem suporte ao GB300 antes de migrar cargas.",
+    "terms": {
+      "PFLOPS": "Peta FLOPs — 10¹⁵ operações de ponto flutuante por segundo; 20 PFLOPS é poder computacional equivalente a ~20 GPUs H100"
+    },
+    "url": "https://www.techpowerup.com/",
+    "fonte": "ASUS / TechPowerUp",
+    "data_str": "15 JUN 2026",
+    "emoji": "⚡",
+    "bullets": []
+  },
+  {
+    "numero": 11,
+    "tipo": "noticia",
+    "categoria": "hardware",
+    "titulo": "NVIDIA SkillSpector Open-Source: scanner de segurança para agent skills com 64 padrões de vulnerabilidade",
+    "resumo": "A NVIDIA abriu o código do SkillSpector, scanner de segurança para skills de agentes de IA. A ferramenta detecta 64 padrões de vulnerabilidade em 16 categorias, incluindo injeção de prompt, vazamento ",
+    "fact": "A NVIDIA abriu o código do SkillSpector, scanner de segurança para skills de agentes de IA. A ferramenta detecta 64 padrões de vulnerabilidade em 16 categorias, incluindo injeção de prompt, vazamento de dados e código malicioso. Pesquisa prévia indicou que 26,1% das skills de agentes contêm vulnerabilidades e 5,2% têm intenção maliciosa provável.",
+    "impact": "Skills de agentes (usadas por Claude Code, Codex CLI, Gemini CLI, Hermes) executam com confiança implícita e pouca verificação. O SkillSpector preenche esse gap: adicione `npx skillspector scan <skill-dir>` ao seu pipeline de CI/CD de agentes. A integração com GitHub Actions permite bloquear PRs que adicionem skills com vulnerabilidades conhecidas. Para quem desenvolve skills próprias, execute o scanner antes de publicar — 1 em cada 4 skills no ecossistema tem falhas.",
+    "terms": {
+      "Agent Skill": "Módulo ou plugin que estende as capacidades de um agente de IA, similar a um plugin de IDE"
+    },
+    "url": "https://github.com/NVIDIA/SkillSpector",
+    "fonte": "NVIDIA / GitHub",
+    "data_str": "14 JUN 2026",
+    "emoji": "🧠",
+    "bullets": []
+  },
+  {
+    "numero": 12,
+    "tipo": "noticia",
+    "categoria": "hardware",
+    "titulo": "Apple Private Cloud Compute expande para Google Cloud com NVIDIA Confidential Computing",
+    "resumo": "A Apple expandiu seu Apple Private Cloud Compute (PCC) para o Google Cloud, utilizando GPUs NVIDIA com Confidential Computing. A medida estende a infraestrutura de IA da Apple sem comprometer o modelo",
+    "fact": "A Apple expandiu seu Apple Private Cloud Compute (PCC) para o Google Cloud, utilizando GPUs NVIDIA com Confidential Computing. A medida estende a infraestrutura de IA da Apple sem comprometer o modelo de privabilidade — os dados do usuário permanecem criptografados mesmo durante o processamento, adotando a arquitetura CC (Confidential Computing — computação confidencial que protege dados em uso via enclaves de hardware).",
+    "impact": "Apple usando Google Cloud é um movimento inédito que quebra a barreira entre os dois ecossistemas. Para engenheiros iOS, isso significa que funcionalidades como Siri AI e Apple Intelligence podem processar consultas mais complexas usando infraestrutura de terceiros sem perder a privabilidade. Na prática, se você desenvolve apps com ML on-device que hoje limitam capacidade por causa do chip do iPhone, comece a planejar um fallback híbrido: processamento local + PCC no Google Cloud. O NVIDIA CC SDK tem exemplos de integração com iOS/macOS.",
+    "terms": {
+      "Confidential Computing": "Tecnologia de hardware que criptografa dados enquanto estão sendo processados na memória, protegendo contra acesso não autorizado mesmo do provedor de nuvem"
+    },
+    "url": "https://www.apple.com/newsroom/2026/06/apple-unveils-next-generation-of-apple-intelligence/",
+    "fonte": "Apple / NVIDIA",
+    "data_str": "JUN 2026",
+    "emoji": "🚀",
+    "bullets": []
+  },
+  {
+    "numero": 13,
+    "tipo": "noticia",
+    "categoria": "hardware",
+    "titulo": "Reino Unido Avança Sovereign AI com Datacenters Nucleares de 1,7 GW e Parceria NVIDIA",
+    "resumo": "O Reino Unido anunciou planos concretos para datacenters de IA alimentados por energia nuclear, com capacidade de 1,7 GW, em parceria com a NVIDIA. O projeto UK Sovereign AI visa construir infraestrut",
+    "fact": "O Reino Unido anunciou planos concretos para datacenters de IA alimentados por energia nuclear, com capacidade de 1,7 GW, em parceria com a NVIDIA. O projeto UK Sovereign AI visa construir infraestrutura soberana de computação de IA usando Small Modular Reactors (SMRs — pequenos reatores modulares que geram até 300 MW cada).",
+    "impact": "Datacenters nucleares são a resposta ao gargalo energético da IA. Para empresas que planejam clusters na Europa, o Reino Unido se torna o destino mais estável. O custo nivelado de energia (LCOE) de SMRs (~US$ 60-100/MWh) compete já com redes elétricas convencionais em regiões com restrições de carbono. Se sua empresa tem workloads de treinamento intensivo, considere colocar workloads no UK a partir de 2027 — a NVIDIA já tem parceria de infraestrutura local.",
+    "terms": {
+      "SMR": "Small Modular Reactor — reator nuclear compacto fabricado em módulos, projetado para construção em fábrica e montagem no local, com custo e prazo previsíveis"
+    },
+    "url": "https://blogs.nvidia.com/",
+    "fonte": "UK Government / NVIDIA",
+    "data_str": "JUN 2026",
+    "emoji": "💡",
+    "bullets": []
+  },
+  {
+    "numero": 14,
+    "tipo": "separador",
+    "categoria": "tendencias",
+    "titulo": "TENDENCIAS",
+    "emoji": "📈",
+    "subtitulo": "4 principais noticias"
+  },
+  {
+    "numero": 15,
+    "tipo": "noticia",
+    "categoria": "tendencias",
+    "titulo": "Dona do Claude, Anthropic se torna startup de IA mais valiosa do mundo",
+    "resumo": "Dona do Claude, Anthropic se torna startup de IA mais valiosa do mundo CNN Brasil",
+    "fact": "",
+    "impact": "",
+    "terms": {},
+    "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxOaVgtZ2xTMm4xV21ENkNKNmxUWEVfUTVfQXpVVkhpczE3cXZDaDZ6OEJLbUpKYXIzSXViWVR6X2tKX09fLTJFZnp0SkRCazh3SDVrSElsM3RkclVzY3FHS1hZQUw5aXYxdlgyRXlxVnZqVWNGSmtOdFVKUFljM0puUTJ0QTV5OTRjZDU3Tnk0b0ZtTWZxTEdrYUhOZTEwSDd5TF8xTWd5RHpXQWhiVEdxNUt0VEQwX3Va?oc=5",
+    "fonte": "Google",
+    "data_str": "29/05/2026",
+    "emoji": "🤖",
+    "bullets": []
+  },
+  {
+    "numero": 16,
+    "tipo": "noticia",
+    "categoria": "tendencias",
+    "titulo": "IA concentra investimentos e startups 'pré-ChatGPT' ficam para trás - TecMundo",
+    "resumo": "IA concentra investimentos e startups 'pré-ChatGPT' ficam para trás TecMundo",
+    "fact": "",
+    "impact": "",
+    "terms": {},
+    "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNOWpnZUFabGlyVmZkc3lQWHBJU1I2NS1peWlZWjMzRElGRGZpT3B5TjFPeXJMeEpaQzlwcndVamVRUzlqeEJIbDNtMDZkNU00VDQ4ZWRROTM3NDV6VjhnSklDbnJfVFpPbml4d1dLZVhwSlNsTW42UWd1cExhdVpJQkdDc25xYkR1UVVXX2dzbm9sMGFJY3ZJQWVqWjJXUkE4dEZlYXdsQXNUYkVhQUN3?oc=5",
+    "fonte": "Google",
+    "data_str": "01/06/2026",
+    "emoji": "⚡",
+    "bullets": []
+  },
+  {
+    "numero": 17,
+    "tipo": "noticia",
+    "categoria": "tendencias",
+    "titulo": "Open AI e a corrida do ouro no mercado de fusões e aquisições - Consultor Jurídico",
+    "resumo": "Open AI e a corrida do ouro no mercado de fusões e aquisições Consultor Jurídico",
+    "fact": "",
+    "impact": "",
+    "terms": {},
+    "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOcTlxVHlPdjJxTVBMYWpPS1FHT3h6bl9wTUFybHE0X2VJM0VNM3lJMDNLblYxc0h5bUhOZnFfbWVIUUd1YW9ibHhnS0sySHQ5bkFaWDFMQ1RLbEF4eVZIeHVLSnVRbHdWWThJaDRpV28xNUt1Z2F5MGktX1NVV2tZTWlCTFkyZW1nVXkw?oc=5",
+    "fonte": "Google",
+    "data_str": "06/03/2026",
+    "emoji": "🧠",
+    "bullets": []
+  },
+  {
+    "numero": 18,
+    "tipo": "noticia",
+    "categoria": "tendencias",
+    "titulo": "Mercado Livre investe em fundo do Vale do Silício especializado em IA - Exame",
+    "resumo": "Mercado Livre investe em fundo do Vale do Silício especializado em IA Exame",
+    "fact": "",
+    "impact": "",
+    "terms": {},
+    "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxNZmFLRmJnakZtNUROWjNOekM0aWNiVHFZcWoyTHNjSDN3STFzaEV1RUc3VXhibjc3dEZNUFBFNnk1NGJQX1NYcmlHTVc0OER1Wno0eU5rZ2lQT082Tm5KT2dlYnpuc0hOMFF3YzFENzFTQ0ZfSDRkZ1ZfWEpXS1IyZ2dRUFRHMkdHY2t0ZDBjNWw3TFpkeHZJWWEydTJGa09qZ3lUQzhnMA?oc=5",
+    "fonte": "Google",
+    "data_str": "02/04/2026",
+    "emoji": "🚀",
+    "bullets": []
+  },
+  {
+    "numero": 19,
+    "tipo": "devimpact",
+    "categoria": "devimpact",
+    "titulo": "O que muda pro Dev",
+    "texto": "O QUE MUDA PRO DEV\n\nArquitetura: Modelos abertos com 1M de contexto.\nHardware: GPUs Blackwell, desktop 20 PFLOPS.\nTendencias: IA generativa, regulamentacao.\n\nFique de olho: MoE, GB300, agents autonomos, NPUs.",
+    "emoji": "🧑‍💻"
+  }
+]
