@@ -212,6 +212,8 @@ def gerar_carrossel_noticias(noticias, config):
 
         if tipo == "capa":
             _desenhar_capa(draw, W, H, slide_data, paleta)
+        elif tipo == "devimpact":
+            _desenhar_devimpact(draw, W, H, slide_data, paleta)
         else:
             _desenhar_noticia(draw, W, H, slide_data, paleta)
 
@@ -327,6 +329,30 @@ def _desenhar_noticia(draw, W, H, slide, paleta):
 
 def _desenhar_encerramento(draw, W, H, slide, paleta):
     pass
+
+
+def _desenhar_devimpact(draw, W, H, slide, paleta):
+    """Slide 'O que muda pro Dev'."""
+    accent = hex_to_rgb(paleta["accent"])
+    font_tit = carregar_fonte("Inter-Bold.ttf", 36)
+    font_texto = carregar_fonte("Inter-Regular.ttf", 26)
+    draw.text((W // 2, 140), "🧑‍💻", fill="white", anchor="mt",
+              font=carregar_fonte("Inter-Regular.ttf", 60))
+    draw.text((W // 2, 230), slide.get("titulo", "O que muda pro Dev"),
+              fill="white", anchor="mt", font=font_tit)
+    draw.rectangle([(W//2 - 100, 270), (W//2 + 100, 274)], fill=accent)
+    texto = slide.get("texto", "")
+    if texto:
+        yt = 320
+        for linha in texto.split("\n"):
+            if linha.strip():
+                draw.text((W // 2, yt), linha.strip(), fill="#cccccc",
+                          anchor="mt", font=font_texto)
+                yt += 40
+    font_hash = carregar_fonte("Inter-Regular.ttf", 22)
+    draw.rectangle([(0, H - 90), (W, H)], fill=(0, 0, 0, 40))
+    draw.text((W // 2, H - 55), "#Dev #Programacao #Carreira #Tecnologia",
+              fill=paleta["hashtag"], anchor="mt", font=font_hash)
 
 
 # ====================================================================
