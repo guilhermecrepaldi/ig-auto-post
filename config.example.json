@@ -1,0 +1,21 @@
+{
+  "instagram": {
+    "username": "SEU_USUARIO",
+    "password": "SUA_SENHA"
+  },
+  "deepseek": {
+    "api_key": "SEU_DEEPSEEK_KEY",
+    "model": "deepseek/deepseek-v4-flash"
+  },
+  "post": {
+    "intervalo_horas": 24,
+    "modo": "auto",
+    "hashtags_padrao": ["dev", "python", "automation", "ai", "coding"]
+  },
+  "templates": [
+    {"nome": "dica", "descricao": "Dica rápida de programação"},
+    {"nome": "projeto", "descricao": "Mostrar projeto em andamento"},
+    {"nome": "reflexao", "descricao": "Reflexão sobre tecnologia"}
+  ],
+  "pasta_saida": "posts"
+}
