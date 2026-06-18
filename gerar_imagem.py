@@ -38,26 +38,14 @@ PALETAS_CATEGORIA = {
         "accent": "#f59e0b", "secundaria": "#d97706",
         "hashtag": "#fcd34d",
     },
-    "cripto": {
-        "bg_top": "#1a0a00", "bg_bot": "#3a1a00",
-        "accent": "#fbbf24", "secundaria": "#f59e0b",
-        "hashtag": "#fde68a",
-    },
-    "encerramento": {
-        "bg_top": "#0a0a0a", "bg_bot": "#1a1a1a",
-        "accent": "#6b7280", "secundaria": "#4b5563",
-        "hashtag": "#9ca3af",
-    },
 }
 
 # Pattern SVG-like por categoria (desenhado com Pillow)
 FUNDOS_PATTERN = {
-    "capa": "circuitos",       # linhas retas + circulos (placa mae)
-    "arquitetura": "rede",     # nos conectados (rede neural)
-    "hardware": "grade",       # grid de pontos (chip)
-    "tendencias": "ondas",     # ondas senoidais (grafico)
-    "cripto": "hexagono",      # hexagonos (blockchain)
-    "encerramento": "estrelas",# pontos aleatorios
+    "capa": "circuitos",
+    "arquitetura": "rede",
+    "hardware": "grade",
+    "tendencias": "ondas",
 }
 
 
@@ -224,8 +212,6 @@ def gerar_carrossel_noticias(noticias, config):
 
         if tipo == "capa":
             _desenhar_capa(draw, W, H, slide_data, paleta)
-        elif tipo == "encerramento":
-            _desenhar_encerramento(draw, W, H, slide_data, paleta)
         else:
             _desenhar_noticia(draw, W, H, slide_data, paleta)
 
@@ -340,30 +326,7 @@ def _desenhar_noticia(draw, W, H, slide, paleta):
 
 
 def _desenhar_encerramento(draw, W, H, slide, paleta):
-    """Slide final de encerramento."""
-    accent = hex_to_rgb(paleta["accent"])
-    secundaria = hex_to_rgb(paleta["secundaria"])
-
-    font_tit = carregar_fonte("Inter-Bold.ttf", 48)
-    font_sub = carregar_fonte("Inter-Regular.ttf", 28)
-    font_cta = carregar_fonte("Inter-Regular.ttf", 22)
-
-    draw.text((W // 2, H // 2 - 80), slide.get("emoji", "🔥"),
-              fill="white", anchor="mm",
-              font=carregar_fonte("Inter-Regular.ttf", 60))
-
-    draw.text((W // 2, H // 2), slide.get("titulo", "Fique por dentro"),
-              fill="white", anchor="mm", font=font_tit)
-
-    draw.text((W // 2, H // 2 + 70),
-              slide.get("subtitulo", "Siga para mais noticias"),
-              fill="#888888", anchor="mm", font=font_sub)
-
-    draw.rectangle([(W//2 - 150, H//2 + 115), (W//2 + 150, H//2 + 119)], fill=accent)
-
-    draw.text((W // 2, H // 2 + 160),
-              "crepaldi.ai.news",
-              fill="#555555", anchor="mm", font=font_cta)
+    pass
 
 
 # ====================================================================

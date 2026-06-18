@@ -17,7 +17,8 @@ CATEGORIAS = {
         "palavras": ["modelo", "llm", "framework", "arquitetura", "transformer",
                      "neural", "treinamento", "treino", "fine-tuning", "open source",
                      "algoritmo", "raciocinio", "reasoning", "agente", "agent",
-                     "deep learning", "machine learning"],
+                     "deep learning", "machine learning", "pesquisa", "research",
+                     "paper", "publicacao", "publicação", "cientista"],
         "emoji": "🏗️",
         "cor": "#00d4ff",
         "descricao": "Arquitetura de IA"
@@ -26,7 +27,7 @@ CATEGORIAS = {
         "palavras": ["chip", "gpu", "nvidia", "amd", "processador", "hardware",
                      "data center", "datacenter", "energia", "consumo", "servidor",
                      "memoria", "inferencia", "treinamento", "computacao",
-                     "edge", "iot", "quantico", "quantum"],
+                     "edge", "iot", "quantico", "quantum", "infraestrutura"],
         "emoji": "⚙️",
         "cor": "#22c55e",
         "descricao": "Hardware e Infraestrutura"
@@ -36,18 +37,12 @@ CATEGORIAS = {
                      "lei", "governo", "openai", "google", "meta", "microsoft",
                      "amazon", "apple", "inovacao", "inovação", "futuro",
                      "emprego", "trabalho", "educacao", "educação",
-                     "copilot", "assistente", "chatbot", "ferramenta"],
+                     "copilot", "assistente", "chatbot", "ferramenta",
+                     "startup", "unicornio", "investidor", "bill gates",
+                     "sam altman", "musk", "etica", "ética", "seguranca"],
         "emoji": "📈",
         "cor": "#f59e0b",
         "descricao": "Tendencias e Mercado"
-    },
-    "cripto": {
-        "palavras": ["bitcoin", "criptomoeda", "blockchain", "ethereum", "web3",
-                     "defi", "nft", "token", "crypto", "mineracao", "mineração",
-                     "ledger", "smart contract", "solana", "cardano"],
-        "emoji": "₿",
-        "cor": "#fbbf24",
-        "descricao": "Criptomoedas e Blockchain"
     }
 }
 
@@ -151,8 +146,9 @@ def buscar_noticias(config):
                 selecionadas.append(fb)
                 cats_presentes.add(fb["categoria"])
 
-    # 5. Formatar resultado (max 6)
-    emojis = ["🤖", "⚙️", "📈", "₿", "🧠", "🚀"]
+    # 5. Formatar resultado
+    emojis = ["🤖", "⚙️", "📈"]
+
     resultado = []
 
     # Primeiro slide: CAPA
@@ -167,7 +163,7 @@ def buscar_noticias(config):
         "resumo": ""
     })
 
-    for i, n in enumerate(selecionadas[:5]):
+    for i, n in enumerate(selecionadas[:3]):
         resultado.append({
             "numero": i + 1,
             "tipo": "noticia",
@@ -179,17 +175,6 @@ def buscar_noticias(config):
             "data_str": n.get("data_str", datetime.now().strftime("%d/%m/%Y")),
             "emoji": emojis[i % len(emojis)],
         })
-
-    # Ultimo slide: ENCERRAMENTO
-    resultado.append({
-        "numero": len(resultado),
-        "tipo": "encerramento",
-        "titulo": "Fique por dentro",
-        "subtitulo": "Siga @crepaldi.ai.news para mais",
-        "emoji": "🔥",
-        "fonte": "",
-        "resumo": ""
-    })
 
     return resultado
 
